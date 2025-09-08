@@ -1,5 +1,6 @@
 package br.com.fiap.testes;
 import br.com.fiap.dao.CadastrarDao;
+import br.com.fiap.enums.PerguntasEnum;
 import br.com.fiap.models.*;
 
 import java.time.LocalDate;
@@ -16,9 +17,38 @@ public class Insercao {
         System.out.println("2 -  Menu Listar");
         System.out.println("3 -  Menu Update");
         System.out.println("4 -  Menu Excluir");
+        System.out.println("5 -  Perguntas Frequentes");
+
         System.out.println("0 -  Finalizar");
+    }
 
+    private static void mostrarFAQMenu() {
+        int escolha = -1;
+        PerguntasEnum[] perguntas = PerguntasEnum.values();
+        while (escolha != 0) {
+            System.out.println("\n========== PERGUNTAS FREQUENTES ==========\nEscolha uma pergunta (1-8) ou 0 para sair\"");
 
+            for (int i = 0; i < perguntas.length; i++) {
+                System.out.println((i + 1) + ". " + perguntas[i].getPergunta());
+            }
+
+            try {
+                Scanner scanner = new Scanner(System.in);
+                escolha = Integer.parseInt(scanner.nextLine());
+                if (escolha < 0 || escolha > perguntas.length) {
+                    System.out.println("Opção inválida!");
+                    continue;
+                }
+
+                if (escolha >= 1 && escolha <= perguntas.length) {
+                    PerguntasEnum pergunta = perguntas[escolha - 1];
+                    System.out.println("\nPergunta: " + pergunta.getPergunta());
+                    System.out.println("Resposta: " + pergunta.getResposta());
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Por favor, digite um número válido.");
+            }
+        }
     }
 
     public static void menuCadastrar() {
@@ -816,6 +846,9 @@ public class Insercao {
                      }
 
                  }
+
+                 case 5:
+                     mostrarFAQMenu();
 
             }
         }while(opCrud !=0);
