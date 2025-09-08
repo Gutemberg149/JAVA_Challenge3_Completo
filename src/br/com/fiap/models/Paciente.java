@@ -11,7 +11,7 @@ public class Paciente {
                 "Id: " + id_paciente +
                 " | Nome: " + nome_paciente +
                 " | CPF: " + cpf_paciente +
-                "\n=======================================\n";
+                "\n------------------------------------\n";
     }
 
     public int getId() {
@@ -38,9 +38,4 @@ public class Paciente {
         this.cpf_paciente = cpf;
     }
 
-//    public Paciente(int id, String nome, int cpf) {
-//        this.id_paciente = id;
-//        this.nome_paciente = nome;
-//        this.cpf_paciente = cpf;
-//    }
 }
