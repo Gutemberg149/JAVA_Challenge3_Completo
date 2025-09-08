@@ -92,6 +92,20 @@ public class CadastrarDao {
             throw new RuntimeException(e);
         }
     }
+    public void excluirPaciente(int id){
+        conexao = ConnectionFactory.obterConexao();
+        PreparedStatement ps = null;
+        try{
+            ps = conexao.prepareStatement("delete from " +
+                    "TBL_HC_PACIENTE where id_paciente = ?");
+            ps.setInt(1, id);
+            ps.executeUpdate();
+            ps.close();
+            conexao.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
 
 
@@ -177,6 +191,21 @@ public class CadastrarDao {
             throw new RuntimeException(e);
         }
     }
+    public void excluirDocPaciente(int id){
+        conexao = ConnectionFactory.obterConexao();
+        PreparedStatement ps = null;
+        try{
+            ps = conexao.prepareStatement("delete from " +
+                    "TBL_HC_DOCUMENT_PACIENTE where id_documneto = ?");
+            ps.setInt(1, id);
+            ps.executeUpdate();
+            ps.close();
+            conexao.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 
 
 
@@ -234,7 +263,7 @@ public class CadastrarDao {
     public ConsultaOnline buscarPorIdConsultaOnline(int id){
         conexao = ConnectionFactory.obterConexao();
         PreparedStatement ps = null;
-        ConsultaOnline consulta = null; // Vamos criar aqui uma variável nula inicialmente
+        ConsultaOnline consulta = null;
         try {
             String sql = "SELECT * FROM TBL_HC_CONSULTA_ONLINE WHERE id_consulta = ?";
             ps = conexao.prepareStatement(sql);
@@ -262,7 +291,6 @@ public class CadastrarDao {
         }
         return consulta;
     }
-
     public void upDateConsultaOnline(ConsultaOnline consultaOnline){
         conexao = ConnectionFactory.obterConexao();
         PreparedStatement ps = null;
@@ -280,7 +308,20 @@ public class CadastrarDao {
             throw new RuntimeException(e);
         }
     }
-
+    public void excluirConsultaOnline(int id){
+        conexao = ConnectionFactory.obterConexao();
+        PreparedStatement ps = null;
+        try{
+            ps = conexao.prepareStatement("delete from " +
+                    "TBL_HC_CONSULTA_ONLINE where id_consulta = ?");
+            ps.setInt(1, id);
+            ps.executeUpdate();
+            ps.close();
+            conexao.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
 
 
@@ -328,6 +369,59 @@ public class CadastrarDao {
         }
         return medicos;
     }
+    public Medico buscarPorIdMedico(int id){
+        conexao = ConnectionFactory.obterConexao();
+        PreparedStatement ps = null;
+        Medico medico = new Medico();
+        try {
+            ps = conexao.prepareStatement("SELECT * from TBL_HC_MEDICOS" +
+                    " WHERE id_medico = ?");
+            ps.setInt(1, id );
+            ResultSet rs = ps.executeQuery();
+            if(rs.next()){
+                medico.setId_medico(rs.getInt(1));
+                medico.setEspecialidade(rs.getString(2));
+                medico.setCrm(rs.getInt(3));
+
+            }
+            ps.close();
+            conexao.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return medico;
+    }
+    public void upDateMedico(Medico medico){
+        conexao = ConnectionFactory.obterConexao();
+        PreparedStatement ps = null;
+        try{
+            String sql = "UPDATE TBL_HC_MEDICOS SET  especialidade = ?, crm = ?";
+            ps = conexao.prepareStatement(sql);
+            ps.setString(1, medico.getEspecialidade());
+            ps.setInt(2, medico.getCrm());
+
+            ps.executeUpdate();
+            ps.close();
+            conexao.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public void excluirMedico(int id){
+        conexao = ConnectionFactory.obterConexao();
+        PreparedStatement ps = null;
+        try{
+            ps = conexao.prepareStatement("delete from " +
+                    "TBL_HC_MEDICOS where id_medico = ?");
+            ps.setInt(1, id);
+            ps.executeUpdate();
+            ps.close();
+            conexao.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 
     public void cadastrarConfirmacaoConsulta(ConfirmacaoConsulta confirmacaoConsulta) {
         conexao = ConnectionFactory.obterConexao();
@@ -373,6 +467,58 @@ public class CadastrarDao {
             throw new RuntimeException(e);
         }
         return confirmacaoConsultas;
+    }
+    public ConfirmacaoConsulta buscarPorIdConfirmacaoConsulta(int id){
+        conexao = ConnectionFactory.obterConexao();
+        PreparedStatement ps = null;
+        ConfirmacaoConsulta confirmacaoConsulta = new ConfirmacaoConsulta();
+        try {
+            ps = conexao.prepareStatement("SELECT * from TBL_HC_CONFIRMACAO_CONSULTA" +
+                    " WHERE id_confirmacao = ?");
+            ps.setInt(1, id );
+            ResultSet rs = ps.executeQuery();
+            if(rs.next()){
+                confirmacaoConsulta.setCodigoConfirmacao(rs.getInt(1));
+                confirmacaoConsulta.setMetodoconfirmacao(rs.getString(2));
+
+
+            }
+            ps.close();
+            conexao.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return confirmacaoConsulta;
+    }
+    public void upDateconfirmacaoConsulta(ConfirmacaoConsulta confirmacaoConsulta){
+        conexao = ConnectionFactory.obterConexao();
+        PreparedStatement ps = null;
+        try{
+            String sql = "UPDATE TBL_HC_CONFIRMACAO_CONSULTA SET  codigoConfirmacao = ?, metodoconfirmacao = ?";
+            ps = conexao.prepareStatement(sql);
+            ps.setInt (1, confirmacaoConsulta.getCodigoConfirmacao());
+            ps.setString(2, confirmacaoConsulta.getMetodoconfirmacao());
+
+            ps.executeUpdate();
+            ps.close();
+            conexao.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public void excluiConfirmacaoConsulta(int id){
+        conexao = ConnectionFactory.obterConexao();
+        PreparedStatement ps = null;
+        try{
+            ps = conexao.prepareStatement("delete from " +
+                    "TBL_HC_CONFIRMACAO_CONSULTA where id_confirmacao = ?");
+            ps.setInt(1, id);
+            ps.executeUpdate();
+            ps.close();
+            conexao.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void cadastrarHistoricoConsulta(Historicoconsulta historicoconsulta) {
@@ -421,6 +567,60 @@ public class CadastrarDao {
             throw new RuntimeException(e);
         }
         return historicoconsultas;
+    }
+    public Historicoconsulta buscarPorIdhistorico(int id){
+        conexao = ConnectionFactory.obterConexao();
+        PreparedStatement ps = null;
+        Historicoconsulta historicoconsulta = new Historicoconsulta();
+        try {
+            ps = conexao.prepareStatement("SELECT * from TBL_HC_HISTORICOS" +
+                    " WHERE id_historico = ?");
+            ps.setInt(1, id );
+            ResultSet rs = ps.executeQuery();
+            if(rs.next()){
+                historicoconsulta.setSintomas_historico(rs.getString(1));
+                historicoconsulta.setDiagnostico(rs.getString(2));
+                historicoconsulta.setObservacao(rs.getString(2));
+
+
+            }
+            ps.close();
+            conexao.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return historicoconsulta;
+    }
+    public void upDateHistorico(Historicoconsulta historicoconsulta){
+        conexao = ConnectionFactory.obterConexao();
+        PreparedStatement ps = null;
+        try{
+            String sql = "UPDATE TBL_HC_HISTORICOS SET  sintomas_historico = ?, diagnostico = ?, observacoes = ?";
+            ps = conexao.prepareStatement(sql);
+            ps.setString (1, historicoconsulta.getSintomas_historico());
+            ps.setString(2, historicoconsulta.getDiagnostico());
+            ps.setString (3, historicoconsulta.getObservacao());
+
+            ps.executeUpdate();
+            ps.close();
+            conexao.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public void excluiHistoricoConsulta(int id){
+        conexao = ConnectionFactory.obterConexao();
+        PreparedStatement ps = null;
+        try{
+            ps = conexao.prepareStatement("delete from " +
+                    "TBL_HC_HISTORICOS where id_historico = ?");
+            ps.setInt(1, id);
+            ps.executeUpdate();
+            ps.close();
+            conexao.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
 
