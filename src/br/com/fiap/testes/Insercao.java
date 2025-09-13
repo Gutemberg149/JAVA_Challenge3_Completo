@@ -1,9 +1,10 @@
 package br.com.fiap.testes;
-import br.com.fiap.dao.CadastrarDao;
+import br.com.fiap.dao.*;
 import br.com.fiap.enums.PerguntasEnum;
 import br.com.fiap.models.*;
 
 import java.time.LocalDate;
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
@@ -20,6 +21,54 @@ public class Insercao {
         System.out.println("5 -  Perguntas Frequentes");
 
         System.out.println("0 -  Finalizar");
+    }
+
+    public static void menuCadastrar() {
+        System.out.println("-----Hc Hospital - Menu Cadastrar-------");
+        System.out.println("1  -  Cadastrar pacientes");
+        System.out.println("2  -  Cadastrar Consultas Online");
+        System.out.println("3  -  Cadastrar Médicos");
+        System.out.println("4  -  Cadastrar Exames");
+        System.out.println("5  -  Cadastrar Historico das consultas");
+
+        System.out.println("0  -  PARA SAIR DE CADASTRAR");
+
+
+    }
+
+    public static void menuListar() {
+        System.out.println("-------Hc Hospital- Menu Listar-------");
+        System.out.println("1 -  Listar  pacientes");
+        System.out.println("2 -  Listar  Consultas online");
+        System.out.println("3 -  Listar  Médicos");
+        System.out.println("4 -  Listar  Exames");
+        System.out.println("5 -  Listar  Historico das Consultas");
+
+        System.out.println("0 - PARA SAIR DE LISTAR");
+
+
+    }
+
+    public static void menuUpdate(){
+        System.out.println("-------Hc Hospital- Menu Update-------");
+        System.out.println("1  -  UpDate  pacientes");
+        System.out.println("2  -  UpDate  Consultas online");
+        System.out.println("3  -  UpDate  Médicos");
+        System.out.println("4  -  UpDate  Exames");
+        System.out.println("5  -  UpDate  Historico das Consultas");
+
+        System.out.println("0 - PARA SAIR DO UPDATE");
+    }
+
+    public static void menuExcluir(){
+        System.out.println("-------Hc Hospital- Menu Excluir-------");
+        System.out.println("1  -  Excluir  pacientes");
+        System.out.println("2  -  Excluir  Consultas online");
+        System.out.println("3  -  Excluir  Médicos");
+        System.out.println("4  -  Excluir  Exames");
+        System.out.println("5  -  Excluir  Historico das Consultas");
+
+        System.out.println("0 - PARA SAIR DE EXCLUIR");
     }
 
     private static void mostrarFAQMenu() {
@@ -51,89 +100,44 @@ public class Insercao {
         }
     }
 
-    public static void menuCadastrar() {
-        System.out.println("-----Hc Hospital - Menu Cadastrar-------");
-        System.out.println("1  -  Cadastrar pacientes");
-        System.out.println("2  -  Cadastrar Documentos");
-        System.out.println("3  -  Cadastrar Consultas Online");
-        System.out.println("4  -  Cadastrar Médicos");
-        System.out.println("5  -  Cadastrar Confirmaçnao das Consultas");
-        System.out.println("6  -  Cadastrar Historico das consultas");
-        System.out.println("7  -  PARA SAIR DE CADASTRAR");
 
+    public static Paciente leituraDados(Paciente paciente) {
+        Scanner scanner = new Scanner(System.in);
 
-    }
-
-    public static void menuListar() {
-        System.out.println("-------Hc Hospital- Menu Listar-------");
-        System.out.println("1 -  Listar  pacientes");
-        System.out.println("2 -  Listar  Documentos");
-        System.out.println("3 -  Listar  Consultas online");
-        System.out.println("4 -  Listar  Médicos");
-        System.out.println("5 -  Listar  Confirmação de Consultas");
-        System.out.println("6 -  Listar  Historico das Consultas");
-        System.out.println("7 - PARA SAIR DE LISTAR");
-
-
-    }
-
-    public static void menuUpdate(){
-        System.out.println("-------Hc Hospital- Menu Update-------");
-        System.out.println("1  -  UpDate  pacientes");
-        System.out.println("2  -  UpDate  Documentos");
-        System.out.println("3  -  UpDate  Consultas online");
-        System.out.println("4  -  UpDate  Médicos");
-        System.out.println("5  -  UpDate  Confirmação de Consultas");
-        System.out.println("6  -  UpDate  Historico das Consultas");
-
-        System.out.println("7 - PARA SAIR DO UPDATE");
-    }
-
-    public static void menuExcluir(){
-        System.out.println("-------Hc Hospital- Menu Excluir-------");
-        System.out.println("1  -  Excluir  pacientes");
-        System.out.println("2  -  Excluir  Documentos");
-        System.out.println("3  -  Excluir  Consultas online");
-        System.out.println("4  -  Excluir  Médicos");
-        System.out.println("5  -  Excluir  Confirmação de Consultas");
-        System.out.println("6  -  Excluir  Historico das Consultas");
-
-        System.out.println("7 - PARA SAIR DE EXCLUIR");
-    }
-
-
-    public static Paciente leituraDados(Paciente paciente){
-        Scanner leitor = new Scanner(System.in);
-        Scanner leitorNum = new Scanner(System.in);
-
-        System.out.println("Id do paciente: ");
-        paciente.setId(leitorNum.nextInt());
+        // Ler ID do paciente com validação
+        boolean idValido = false;
+        while (!idValido) {
+            try {
+                System.out.println("Id do paciente: ");
+                paciente.setId(scanner.nextInt());
+                scanner.nextLine();  // Consumir a quebra de linha
+                idValido = true;
+            } catch (InputMismatchException e) {
+                System.out.println("Erro: Digite um número válido para o ID!");
+                scanner.nextLine();  // Limpar o input inválido
+            }
+        }
 
         System.out.println("Nome do paciente: ");
-        paciente.setNome(leitor.nextLine());
+        paciente.setNome(scanner.nextLine());
 
-        System.out.println("CPF do paciente: ");
-        paciente.setCpf(leitorNum.nextInt());
+        // Ler CPF do paciente com validação
+        boolean cpfValido = false;
+        while (!cpfValido) {
+            try {
+                System.out.println("CPF do paciente (apenas números): ");
+                paciente.setCpf(scanner.nextInt());
+                scanner.nextLine();  // Consumir a quebra de linha
+                cpfValido = true;
+            } catch (InputMismatchException e) {
+                System.out.println("Erro: Digite um número válido para o CPF (apenas números)!");
+                scanner.nextLine();  // Limpar o input inválido
+            }
+        }
+
         System.out.println(paciente);
         return paciente;
-    };
-
-
-    public static DoumentoPaciente leituraDadosDocumnetos(DoumentoPaciente documentos){
-        Scanner leitor = new Scanner(System.in);
-        Scanner leitorNum = new Scanner(System.in);
-
-        System.out.println("Id do documento: ");
-        documentos.setId_documneto(leitor.nextInt());
-
-        System.out.println("Tipo de documento do paciente: ");
-        documentos.setType_documento(leitorNum.nextLine());
-
-        System.out.println("Documneto validado, 1 para ele é valido 0 (zero) não valido: ");
-        documentos.setValido(leitorNum.nextInt());
-
-        return documentos;
-    };
+    }
 
     public static ConsultaOnline leituraDadosConsultaOnline(ConsultaOnline consultaOnline){
         Scanner leitor = new Scanner(System.in);
@@ -182,20 +186,20 @@ public class Insercao {
         return medico;
     };
 
-    public static ConfirmacaoConsulta leituraDadosConfirmacaoConsulta(ConfirmacaoConsulta confirmacaoConsulta){
+    public static Exame leituraExames(Exame exame){
         Scanner leitor = new Scanner(System.in);
         Scanner leitorNum = new Scanner(System.in);
 
-        System.out.println("Id da confirmação: ");
-        confirmacaoConsulta.setId_confirmacao(leitorNum.nextInt());
+        System.out.println("Id do exame: ");
+        exame.setId_exame(leitorNum.nextInt());
 
-        System.out.println("Codigo de confirmação: ");
-        confirmacaoConsulta.setCodigoConfirmacao(leitorNum.nextInt());
+        System.out.println("Nome do exame: ");
+        exame.setNome_exame(leitor.nextLine());
 
-        System.out.println("Metodo de confirmação: ");
-        confirmacaoConsulta.setMetodoconfirmacao(leitor.nextLine());
+        System.out.println("Resultados do exame: ");
+        exame.setResultado_exame(leitor.nextLine());
 
-        return confirmacaoConsulta;
+        return exame;
     };
 
     public static Historicoconsulta leituraDadoshistoricosconsultas(Historicoconsulta historicoconsulta){
@@ -221,7 +225,11 @@ public class Insercao {
     public static void main(String[] args) {
 
         Scanner leitorNum = new Scanner(System.in);
-        CadastrarDao cadastros = new CadastrarDao();
+        PacienteDao cadastros = new PacienteDao();
+        ConsultaOnlineDao consultaOnlineDao = new ConsultaOnlineDao();
+        MedicoDao cadastroMedicoDao = new MedicoDao();
+        ExameDao exameDao = new ExameDao();
+        HistoricoConsultaDao historicoConsultaDao = new HistoricoConsultaDao();
 
         int opCrud;
         int opCadastrar;
@@ -235,7 +243,7 @@ public class Insercao {
             private List<Paciente> pacientesList;
 
             public ListarPacientes() {
-                CadastrarDao dao = new CadastrarDao();
+                PacienteDao dao = new PacienteDao();
                 this.pacientesList = dao.listarPacientes();
             }
 
@@ -246,26 +254,11 @@ public class Insercao {
             }
         }
 
-        class ListarDocumentos {
-            private List<DoumentoPaciente> documentosList;
-
-            public ListarDocumentos() {
-                CadastrarDao dao = new CadastrarDao();
-                this.documentosList = dao.ListarDocumentos();
-            }
-
-            public void imprimirDocs() {
-                for (DoumentoPaciente p : documentosList) {
-                    System.out.println(p);
-                }
-            }
-        }
-
         class ListarConsultasOnline {
             private List<ConsultaOnline> consultaOnlinesList;
 
             public ListarConsultasOnline() {
-                CadastrarDao dao = new CadastrarDao();
+                ConsultaOnlineDao dao = new ConsultaOnlineDao();
                 this.consultaOnlinesList = dao.ListarConsultasOnline();
             }
 
@@ -280,7 +273,7 @@ public class Insercao {
             private List<Medico> medicosList;
 
             public ListarMedicos() {
-                CadastrarDao dao = new CadastrarDao();
+                MedicoDao dao = new MedicoDao();
                 this.medicosList = dao.ListarMedicos();
             }
 
@@ -291,16 +284,16 @@ public class Insercao {
             }
         }
 
-        class ListarConfirmacaoDeconsulta {
-            private List<ConfirmacaoConsulta> confirmacaoConsultas;
+        class ListarExames{
+            private List<Exame> exameList;
 
-            public ListarConfirmacaoDeconsulta() {
-                CadastrarDao dao = new CadastrarDao();
-                this.confirmacaoConsultas = dao.ListarConfirmacaoDeconsulta();
+            public ListarExames() {
+                ExameDao dao = new ExameDao();
+                this.exameList = dao.ListarExames();
             }
 
-            public void imprimirConfirmacao() {
-                for (ConfirmacaoConsulta p : confirmacaoConsultas) {
+            public void imprimirExames() {
+                for (Exame p : exameList) {
                     System.out.println(p);
                 }
             }
@@ -310,7 +303,7 @@ public class Insercao {
             private List<Historicoconsulta> historicoconsultas;
 
             public ListarhistoricosConsultas() {
-                CadastrarDao dao = new CadastrarDao();
+                HistoricoConsultaDao dao = new HistoricoConsultaDao();
                 this.historicoconsultas = dao.ListarhistoricosConsultas();
             }
 
@@ -327,7 +320,7 @@ public class Insercao {
             public void atualizarPaciente() {
                 Scanner scanner = new Scanner(System.in);
 
-                CadastrarDao dao = new CadastrarDao();
+                PacienteDao dao = new PacienteDao();
 
                 System.out.println("Digite o id do paciente desejado: ");
                 int id = scanner.nextInt();
@@ -367,57 +360,12 @@ public class Insercao {
             }
         }
 
-         class UpdateDocPaciente {
-
-            public void atualizarDocPaciente() {
-                Scanner scanner = new Scanner(System.in);
-
-                CadastrarDao dao = new CadastrarDao();
-
-                System.out.println("Digite o id do documento desejado: ");
-                int id = scanner.nextInt();
-                scanner.nextLine();
-
-                DoumentoPaciente doc = dao.buscarPorIdDocPaciente(id);
-                if (doc == null) {
-                    System.out.println("Paciente não encontrado!");
-                    return;
-                }
-
-                System.out.println("Qual campo deseja alterar?");
-                System.out.println("1 - Valido");
-                System.out.println("2 - tipo de doc");
-                int op = scanner.nextInt();
-                scanner.nextLine();
-
-                switch (op) {
-                    case 1:
-                        System.out.println("Digite a nova validação:");
-                        String novoValidacao = scanner.nextLine();
-                        doc.setType_documento(novoValidacao);
-                        break;
-                    case 2:
-                        System.out.println("Digite o novo tipo:");
-                        String novoTipo = scanner.nextLine();
-                        scanner.nextLine();
-                        doc.setType_documento(novoTipo);
-                        break;
-                    default:
-                        System.out.println("Opção inválida");
-                        return;
-                }
-
-                dao.upDateDocPaciente(doc);
-                System.out.println("Documento do paciente atualizado: " + doc);
-            }
-        }
-
          class UpdateConsultaOnline {
 
             public void atualizarConsultaOnline() {
                 Scanner scanner = new Scanner(System.in);
 
-                CadastrarDao dao = new CadastrarDao();
+                ConsultaOnlineDao dao = new ConsultaOnlineDao();
 
                 System.out.println("Digite o id da consulta desejada: ");
                 int id = scanner.nextInt();
@@ -478,7 +426,7 @@ public class Insercao {
             public void atualizarMedico() {
                 Scanner scanner = new Scanner(System.in);
 
-                CadastrarDao dao = new CadastrarDao();
+                MedicoDao dao = new MedicoDao();
 
                 System.out.println("Digite o id do medico desejado: ");
                 int id = scanner.nextInt();
@@ -518,48 +466,50 @@ public class Insercao {
             }
         }
 
-         class UpdateConfirmacaoConsulta {
+         class UpdateExame{
 
-            public void atualizarMedico() {
+            public void atualizarExame() {
                 Scanner scanner = new Scanner(System.in);
 
-                CadastrarDao dao = new CadastrarDao();
+                ExameDao dao = new ExameDao();
 
-                System.out.println("Digite o id da consulta desejada: ");
+                System.out.println("Digite o id do exame desejado: ");
                 int id = scanner.nextInt();
                 scanner.nextLine();
 
-                ConfirmacaoConsulta confirmacao = dao.buscarPorIdConfirmacaoConsulta(id);
-                if (confirmacao == null) {
-                    System.out.println("Consulta não encontrado!");
+
+
+                Exame exame = dao.buscarPorIdExame(id);
+                if (exame == null) {
+                    System.out.println("Exame não encontrado!");
                     return;
                 }
 
                 System.out.println("Qual campo deseja alterar?");
-                System.out.println("1 - Codigode confirmação");
-                System.out.println("2 - Metodo de confirmação");
+                System.out.println("1 -  Nome do exame");
+                System.out.println("2 -  Resultado do exame");
                 int op = scanner.nextInt();
                 scanner.nextLine();
 
                 switch (op) {
                     case 1:
-                        System.out.println("Digite o novo codigo:");
-                        int novoCodigo = scanner.nextInt();
-                        confirmacao.setCodigoConfirmacao(novoCodigo);
+                        System.out.println("Digite o novo nome:");
+                        String novoNome = scanner.nextLine();
+                        exame.setNome_exame(novoNome);
                         break;
                     case 2:
-                        System.out.println("Digite novo metodo de confirmação:");
-                        String novoMetodo= scanner.nextLine();
+                        System.out.println("Digite novo resultado:");
+                        String novoResultado= scanner.nextLine();
                         scanner.nextLine();
-                        confirmacao.setMetodoconfirmacao(novoMetodo);
+                        exame.setResultado_exame(novoResultado);
                         break;
                     default:
                         System.out.println("Opção inválida");
                         return;
                 }
 
-                dao.upDateconfirmacaoConsulta(confirmacao);
-                System.out.println("Documento do paciente atualizado: " + confirmacao);
+                dao.upDateExame(exame);
+                System.out.println("Exame do paciente atualizado: " + exame);
             }
         }
 
@@ -568,7 +518,7 @@ public class Insercao {
             public void atualizarHistorico() {
                 Scanner scanner = new Scanner(System.in);
 
-                CadastrarDao dao = new CadastrarDao();
+                HistoricoConsultaDao dao = new HistoricoConsultaDao();
 
                 System.out.println("Digite o id do Historico desejado: ");
                 int id = scanner.nextInt();
@@ -614,11 +564,12 @@ public class Insercao {
                 System.out.println("Documento do paciente atualizado: " + historico);
             }
         }
+
 //      ------------------- Classes para exclusão de dados------------------------
         class ExcluirPacienteData{
             public void excluir(){
                 Scanner leitor = new Scanner(System.in);
-                CadastrarDao dao = new CadastrarDao();
+                PacienteDao dao = new PacienteDao();
 
                 System.out.println("Digite o id do Paciente: ");
                 int id = leitor.nextInt();
@@ -627,22 +578,10 @@ public class Insercao {
             }
         }
 
-        class ExcluirDocumentoPacienteData{
-            public void excluir(){
-                Scanner leitor = new Scanner(System.in);
-                CadastrarDao dao = new CadastrarDao();
-
-                System.out.println("Digite o id do documento do paciente: ");
-                int id = leitor.nextInt();
-                dao.excluirDocPaciente(id);
-                System.out.println("Registro excluído com sucesso!");
-            }
-        }
-
         class ExcluirconsultaData{
             public void excluir(){
                 Scanner leitor = new Scanner(System.in);
-                CadastrarDao dao = new CadastrarDao();
+                ConsultaOnlineDao dao = new ConsultaOnlineDao();
 
                 System.out.println("Digite o id do agendamento da consulta: ");
                 int id = leitor.nextInt();
@@ -654,7 +593,7 @@ public class Insercao {
         class ExcluirMedicoData{
             public void excluir(){
                 Scanner leitor = new Scanner(System.in);
-                CadastrarDao dao = new CadastrarDao();
+                MedicoDao dao = new MedicoDao();
 
                 System.out.println("Digite o id do médico: ");
                 int id = leitor.nextInt();
@@ -663,14 +602,14 @@ public class Insercao {
             }
         }
 
-        class ExcluirConfirmacaoConsultaData{
+        class ExcluirExame{
             public void excluir(){
                 Scanner leitor = new Scanner(System.in);
-                CadastrarDao dao = new CadastrarDao();
+                ExameDao dao = new ExameDao();
 
-                System.out.println("Digite o id da confirmação: ");
+                System.out.println("Digite o id do exame: ");
                 int id = leitor.nextInt();
-                dao.excluiConfirmacaoConsulta(id);
+                dao.excluirExame(id);
                 System.out.println("Registro excluído com sucesso!");
             }
         }
@@ -678,7 +617,7 @@ public class Insercao {
         class ExcluirHistoricoConsultaData{
             public void excluir(){
                 Scanner leitor = new Scanner(System.in);
-                CadastrarDao dao = new CadastrarDao();
+                HistoricoConsultaDao dao = new HistoricoConsultaDao();
 
                 System.out.println("Digite o id do historico: ");
                 int id = leitor.nextInt();
@@ -706,84 +645,75 @@ public class Insercao {
                                 break;
 
                             case 2:
-                                System.out.println("CADASTRAR DOCUMENTAÇAO DO PACIENTE" +
-                                        "\n===============================================");
-                                DoumentoPaciente documentoPaciente = new DoumentoPaciente();
-                                cadastros.cadastrarDocumentoPaciente(leituraDadosDocumnetos(documentoPaciente));
-                                System.out.println("Documento cadastrado com sucesso!");
-                                break;
-
-
-                            case 3:
                                 System.out.println("CADASTRAR CONSULTA ONLINE" +
                                         "\n===============================================");
                                 ConsultaOnline consultaOnline = new ConsultaOnline();
-                                cadastros.cadastrarConsultaOnline(leituraDadosConsultaOnline(consultaOnline));
+                                consultaOnlineDao.cadastrarConsultaOnline(leituraDadosConsultaOnline(consultaOnline));
                                 System.out.println("Consulta cadastrado com sucesso!");
                                 break;
 
-                            case 4:
+                            case 3:
                                 System.out.println("CADASTRAR MEDICO" +
                                         "\n===============================================");
                                 Medico medico = new Medico();
-                                cadastros.cadastrarMedico(leituraDadosMedicos(medico));
+                                cadastroMedicoDao.cadastrarMedico(leituraDadosMedicos(medico));
                                 System.out.println("Médico cadastrado com sucesso!");
+                                break;
+
+                            case 4:
+                                System.out.println("CADASTRAR EXAMES" +
+                                        "\n===============================================");
+                                Exame exame = new Exame();
+                                exameDao.cadastrarExame(leituraExames(exame));
+                                System.out.println("Exame cadastrado com sucesso!");
                                 break;
 
                             case 5:
-                                System.out.println("CADASTRAR CONFIRMAÇAO DAS CONSULTAS" +
-                                        "\n===============================================");
-                                ConfirmacaoConsulta confirmacaoConsulta = new ConfirmacaoConsulta();
-                                cadastros.cadastrarConfirmacaoConsulta(leituraDadosConfirmacaoConsulta(confirmacaoConsulta));
-                                System.out.println("Médico cadastrado com sucesso!");
-                                break;
-
-                            case 6:
                                 System.out.println("CADASTRAR HISTORICO DAS CONSULTAS" +
                                         "\n===============================================");
                                 Historicoconsulta historicoconsulta = new Historicoconsulta();
-                                cadastros.cadastrarHistoricoConsulta(leituraDadoshistoricosconsultas(historicoconsulta));
-                                System.out.println("Médico cadastrado com sucesso!");
-                            break;
+                                historicoConsultaDao.cadastrarHistoricoConsulta(leituraDadoshistoricosconsultas(historicoconsulta));
+                                System.out.println("Hitorico de consulta cadastrado com sucesso!");
+                                break;
 
                         }
-                    }while (opCadastrar != 7);
+                    }while (opCadastrar != 0);
                 }
                   break;
 
                  case 2:{
-                     menuListar();
-                     opListar =leitorNum.nextInt();
-                     switch (opListar){
+                     do {
+                        menuListar();
+                        opListar =leitorNum.nextInt();
+                        switch (opListar){
                          case 1:
-                             ListarPacientes listaPacients = new ListarPacientes();
-                             listaPacients.imprimirPacientes();
+                             ListarPacientes listarPacientes = new ListarPacientes();
+                             listarPacientes.imprimirPacientes();
                              break;
                          case 2:
-                             ListarDocumentos listaDocs = new ListarDocumentos();
-                             listaDocs.imprimirDocs();
-                             break;
-                         case 3:
                              ListarConsultasOnline listarConsulta = new ListarConsultasOnline();
                              listarConsulta.imprimirconsultas();
                              break;
-                         case 4:
+                         case 3:
                              ListarMedicos listarMedicos = new ListarMedicos();
                              listarMedicos.imprimirMedicos();
                              break;
-                         case 5:
-                             ListarConfirmacaoDeconsulta listarConfirmacaoDeconsulta = new ListarConfirmacaoDeconsulta();
-                             listarConfirmacaoDeconsulta.imprimirConfirmacao();
+                         case 4:
+                             ListarExames listarExames = new ListarExames();
+                             listarExames.imprimirExames();
                              break;
 
-                         case 6:
+                         case 5:
                              ListarhistoricosConsultas listarhistoricosConsultas = new ListarhistoricosConsultas();
                              listarhistoricosConsultas.imprimirHistoricos();
                              break;
                      }
+                     }while(opListar != 0);
                  }
+                 break;
 
                  case 3:{
+                     do{
                      menuUpdate();
                      opUpDate = leitorNum.nextInt();
                      switch (opUpDate){
@@ -792,30 +722,29 @@ public class Insercao {
                              updater.atualizarPaciente();
                              break;
                          case 2:
-                             UpdateDocPaciente updateDocPaciente = new UpdateDocPaciente();
-                             updateDocPaciente.atualizarDocPaciente();
-                             break;
-                         case 3:
                              UpdateConsultaOnline consultaOnline = new UpdateConsultaOnline();
                              consultaOnline.atualizarConsultaOnline();
                              break;
-                         case 4:
+                         case 3:
                              UpdateMedico updateMedico = new UpdateMedico();
                              updateMedico.atualizarMedico();
                              break;
 
-                         case 5:
-                             UpdateConfirmacaoConsulta updateConfirmacaoConsulta = new UpdateConfirmacaoConsulta();
-                             updateConfirmacaoConsulta.atualizarMedico();
+                         case 4:
+                             UpdateExame updateExame = new UpdateExame();
+                             updateExame.atualizarExame();
                              break;
-                         case 6:
+                         case 5:
                              UpdateHistoricoconsultas updateHistoricoconsultas = new UpdateHistoricoconsultas();
                              updateHistoricoconsultas.atualizarHistorico();
                              break;
                      };
+                     }while(opUpDate !=0);
                  }
+                 break;
 
                  case 4:{
+                     do{
                      menuExcluir();
                      opExcluir = leitorNum.nextInt();
                      switch (opExcluir){
@@ -823,36 +752,33 @@ public class Insercao {
                              ExcluirPacienteData excluirPacienteData = new ExcluirPacienteData();
                              excluirPacienteData.excluir();
                              break;
+
                          case 2:
-                             ExcluirDocumentoPacienteData excluirDocumentoPacienteData = new ExcluirDocumentoPacienteData();
-                             excluirDocumentoPacienteData.excluir();
-                             break;
-                         case 3:
                              ExcluirconsultaData excluirconsultaData = new ExcluirconsultaData();
                              excluirconsultaData.excluir();
                              break;
-                         case 4:
+                         case 3:
                              ExcluirMedicoData excluirMedicoData = new ExcluirMedicoData();
                              excluirMedicoData.excluir();
                              break;
-                         case 5:
-                             ExcluirConfirmacaoConsultaData excluirConfirmacaoConsultaData = new ExcluirConfirmacaoConsultaData();
-                             excluirConfirmacaoConsultaData.excluir();
+                         case 4:
+                             ExcluirExame excluirExame = new ExcluirExame();
+                             excluirExame.excluir();
                              break;
-                         case 6:
+                         case 5:
                              ExcluirHistoricoConsultaData excluirHistoricoConsultaData= new ExcluirHistoricoConsultaData();
                              excluirHistoricoConsultaData.excluir();
                              break;
                      }
-
+                     }while(opExcluir!=0);
                  }
+                 break;
 
                  case 5:
                      mostrarFAQMenu();
 
             }
         }while(opCrud !=0);
-
 
     }
 }
