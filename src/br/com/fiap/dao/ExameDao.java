@@ -11,6 +11,7 @@ import java.util.List;
 
 public class ExameDao {
     private Connection conexao;
+
     public void cadastrarExame(Exame exame) {
         conexao = ConnectionFactory.obterConexao();
 
@@ -33,29 +34,36 @@ public class ExameDao {
             e.printStackTrace();
         }
     }
-    public List<Exame> ListarExames(){
-        List<Exame> exames = new ArrayList<>();
+
+    public List<String> ListarExamesComResultado() {
+        List<String> examesComStatus = new ArrayList<>();
         conexao = ConnectionFactory.obterConexao();
         PreparedStatement ps = null;
-        try{
-            ps = conexao.prepareStatement("SELECT * FROM TBL_HC_EXAME order by id_exame");
+        try {
+            ps = conexao.prepareStatement("SELECT * FROM TBL_HC_EXAME ORDER BY id_exame");
             ResultSet rs = ps.executeQuery();
-            while (rs.next()){
+            while (rs.next()) {
                 Exame exame = new Exame();
                 exame.setId_exame(rs.getInt(1));
                 exame.setNome_exame(rs.getString(2));
                 exame.setResultado_exame(rs.getString(3));
 
-
-                exames.add(exame);
+                // Use verificarResultado() method here
+                String status = exame.verificarResultado();
+                String descricao = "ID: " + exame.getId_exame() +
+                        ", Nome: " + exame.getNome_exame() +
+                        ", Resultado: " + exame.getResultado_exame() +
+                        ", Status: " + status;
+                examesComStatus.add(descricao);
             }
             ps.close();
             conexao.close();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        return exames;
+        return examesComStatus;
     }
+
     public Exame buscarPorIdExame(int id){
         conexao = ConnectionFactory.obterConexao();
         PreparedStatement ps = null;
@@ -77,6 +85,7 @@ public class ExameDao {
         }
         return exame;
     }
+
     public void upDateExame(Exame exame){
         conexao = ConnectionFactory.obterConexao();
         PreparedStatement ps = null;
@@ -93,6 +102,7 @@ public class ExameDao {
             throw new RuntimeException(e);
         }
     }
+
     public void excluirExame(int id){
         conexao = ConnectionFactory.obterConexao();
         PreparedStatement ps = null;

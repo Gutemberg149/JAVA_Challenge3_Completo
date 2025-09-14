@@ -1,6 +1,6 @@
 package br.com.fiap.dao;
 
-import br.com.fiap.models.Historicoconsulta;
+import br.com.fiap.models.HistoricoConsulta;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -12,7 +12,7 @@ import java.util.List;
 public class HistoricoConsultaDao {
     private Connection conexao;
 
-    public void cadastrarHistoricoConsulta(Historicoconsulta historicoconsulta) {
+    public void cadastrarHistoricoConsulta(HistoricoConsulta historicoconsulta) {
         conexao = ConnectionFactory.obterConexao();
 
         PreparedStatement comandoSQL = null;
@@ -35,34 +35,42 @@ public class HistoricoConsultaDao {
             e.printStackTrace();
         }
     }
-    public List<Historicoconsulta> ListarhistoricosConsultas(){
-        List<Historicoconsulta> historicoconsultas = new ArrayList<>();
+
+    public List<String> ListarHistoricosConsultasComDiagnosticoCritico() {
+        List<String> historicosComCritico = new ArrayList<>();
         conexao = ConnectionFactory.obterConexao();
         PreparedStatement ps = null;
-        try{
-            ps = conexao.prepareStatement("SELECT * FROM TBL_HC_HISTORICOS order by id_historico");
+        try {
+            ps = conexao.prepareStatement("SELECT * FROM TBL_HC_HISTORICOS ORDER BY id_historico");
             ResultSet rs = ps.executeQuery();
-            while (rs.next()){
-                Historicoconsulta historicoconsulta = new Historicoconsulta();
+            while (rs.next()) {
+                HistoricoConsulta historicoconsulta = new HistoricoConsulta();
                 historicoconsulta.setId_historico(rs.getInt(1));
                 historicoconsulta.setSintomas_historico(rs.getString(2));
                 historicoconsulta.setDiagnostico(rs.getString(3));
-                historicoconsulta.setObservacao(rs.getString(3));
+                historicoconsulta.setObservacao(rs.getString(4)); // corrected index
 
-
-                historicoconsultas.add(historicoconsulta);
+                // Use the method to check if diagnosis is critical
+                if (historicoconsulta.isDiagnosticoCritical()) {
+                    String info = "Id: " + historicoconsulta.getId_historico() +
+                            " | Diagnóstico crítico: " + historicoconsulta.getDiagnostico() +
+                            " | Observações: " + historicoconsulta.getObservacao();
+                    historicosComCritico.add(info);
+                }
             }
             ps.close();
             conexao.close();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        return historicoconsultas;
+        return historicosComCritico;
     }
-    public Historicoconsulta buscarPorIdhistorico(int id){
+
+
+    public HistoricoConsulta buscarPorIdhistorico(int id){
         conexao = ConnectionFactory.obterConexao();
         PreparedStatement ps = null;
-        Historicoconsulta historicoconsulta = new Historicoconsulta();
+        HistoricoConsulta historicoconsulta = new HistoricoConsulta();
         try {
             ps = conexao.prepareStatement("SELECT * from TBL_HC_HISTORICOS" +
                     " WHERE id_historico = ?");
@@ -82,7 +90,8 @@ public class HistoricoConsultaDao {
         }
         return historicoconsulta;
     }
-    public void upDateHistorico(Historicoconsulta historicoconsulta){
+
+    public void upDateHistorico(HistoricoConsulta historicoconsulta){
         conexao = ConnectionFactory.obterConexao();
         PreparedStatement ps = null;
         try{
@@ -99,6 +108,7 @@ public class HistoricoConsultaDao {
             throw new RuntimeException(e);
         }
     }
+
     public void excluiHistoricoConsulta(int id){
         conexao = ConnectionFactory.obterConexao();
         PreparedStatement ps = null;

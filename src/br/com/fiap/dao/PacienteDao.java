@@ -13,8 +13,11 @@ public class PacienteDao {
     private Connection conexao;
 
     public void cadastrarPacientefunc(Paciente paciente){
-        conexao = ConnectionFactory.obterConexao();
+        if (!paciente.isCpfValido()) {
+            throw new IllegalArgumentException("CPF inválido: deve ter exatamente 11 dígitos");
+        }
 
+        conexao = ConnectionFactory.obterConexao();
         PreparedStatement comandoSQL = null;
 
         try{
@@ -24,7 +27,7 @@ public class PacienteDao {
 
             comandoSQL.setInt(1,paciente.getId());
             comandoSQL.setString(2, paciente.getNome());
-            comandoSQL.setInt(3, paciente.getCpf());
+            comandoSQL.setString(3, paciente.getCpf());
             comandoSQL.executeUpdate();
             comandoSQL.close();
             conexao.close();
@@ -32,6 +35,7 @@ public class PacienteDao {
             e.printStackTrace();
         };
     }
+
     public List<Paciente> listarPacientes(){
         List<Paciente> pacientes = new ArrayList<>();
         conexao = ConnectionFactory.obterConexao();
@@ -43,7 +47,7 @@ public class PacienteDao {
                 Paciente paciente = new Paciente();
                 paciente.setId(rs.getInt(1));
                 paciente.setNome(rs.getString(2));
-                paciente.setCpf(rs.getInt(3));
+                paciente.setCpf(rs.getString(3));
                 pacientes.add(paciente);
             }
             ps.close();
@@ -53,6 +57,7 @@ public class PacienteDao {
         }
         return pacientes;
     }
+
     public Paciente buscarPorIdPaciente(int id){
         conexao = ConnectionFactory.obterConexao();
         PreparedStatement ps = null;
@@ -65,7 +70,7 @@ public class PacienteDao {
             if(rs.next()){
                 paciente.setId(rs.getInt(1));
                 paciente.setNome(rs.getString(2));
-                paciente.setCpf(rs.getInt(3));
+                paciente.setCpf(rs.getString(3));
 
             }
             ps.close();
@@ -75,6 +80,7 @@ public class PacienteDao {
         }
         return paciente;
     }
+
     public void upDatePaciente(Paciente paciente){
         conexao = ConnectionFactory.obterConexao();
         PreparedStatement ps = null;
@@ -82,7 +88,7 @@ public class PacienteDao {
             String sql = "UPDATE TBL_HC_PACIENTE SET  nome_paciente = ?, cpf_paciente = ?";
             ps = conexao.prepareStatement(sql);
             ps.setString(1, paciente.getNome());
-            ps.setInt(2, paciente.getCpf());
+            ps.setString(2, paciente.getCpf());
 
             ps.executeUpdate();
             ps.close();
@@ -91,6 +97,7 @@ public class PacienteDao {
             throw new RuntimeException(e);
         }
     }
+
     public void excluirPaciente(int id){
         conexao = ConnectionFactory.obterConexao();
         PreparedStatement ps = null;

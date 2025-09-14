@@ -36,6 +36,7 @@ public class ConsultaOnlineDao {
             e.printStackTrace();
         };
     }
+
     public List<ConsultaOnline> ListarConsultasOnline() {
         List<ConsultaOnline> consultas = new ArrayList<>();
         conexao = ConnectionFactory.obterConexao();
@@ -64,6 +65,7 @@ public class ConsultaOnlineDao {
         }
         return consultas;
     }
+
     public ConsultaOnline buscarPorIdConsultaOnline(int id){
         conexao = ConnectionFactory.obterConexao();
         PreparedStatement ps = null;
@@ -95,6 +97,7 @@ public class ConsultaOnlineDao {
         }
         return consulta;
     }
+
     public void upDateConsultaOnline(ConsultaOnline consultaOnline){
         conexao = ConnectionFactory.obterConexao();
         PreparedStatement ps = null;
@@ -112,6 +115,7 @@ public class ConsultaOnlineDao {
             throw new RuntimeException(e);
         }
     }
+
     public void excluirConsultaOnline(int id){
         conexao = ConnectionFactory.obterConexao();
         PreparedStatement ps = null;

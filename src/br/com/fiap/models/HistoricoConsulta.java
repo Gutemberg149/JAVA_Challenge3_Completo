@@ -1,12 +1,17 @@
 package br.com.fiap.models;
 
-import java.time.LocalDate;
-
-public class Historicoconsulta {
+public class HistoricoConsulta {
     private int id_historico;
     private String sintomas_historico;
     private String diagnostico;
     private String observacao;
+
+    public boolean isDiagnosticoCritical() {
+        if (diagnostico != null && diagnostico.toLowerCase().contains("grave")) {
+            return true;
+        }
+        return false;
+    }
 
     @Override
     public String toString() {

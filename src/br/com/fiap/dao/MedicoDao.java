@@ -17,6 +17,8 @@ public class MedicoDao {
         PreparedStatement comandoSQL = null;
 
         try {
+
+
             String sql = "INSERT INTO TBL_HC_MEDICOS(id_medico, especialidade, crm) values(?,?,?)";
 
             comandoSQL = conexao.prepareStatement(sql);
@@ -33,6 +35,7 @@ public class MedicoDao {
             e.printStackTrace();
         }
     }
+
     public List<Medico> ListarMedicos(){
         List<Medico> medicos = new ArrayList<>();
         conexao = ConnectionFactory.obterConexao();
@@ -55,6 +58,7 @@ public class MedicoDao {
         }
         return medicos;
     }
+
     public Medico buscarPorIdMedico(int id){
         conexao = ConnectionFactory.obterConexao();
         PreparedStatement ps = null;
@@ -77,6 +81,7 @@ public class MedicoDao {
         }
         return medico;
     }
+
     public void upDateMedico(Medico medico){
         conexao = ConnectionFactory.obterConexao();
         PreparedStatement ps = null;
@@ -93,6 +98,7 @@ public class MedicoDao {
             throw new RuntimeException(e);
         }
     }
+
     public void excluirMedico(int id){
         conexao = ConnectionFactory.obterConexao();
         PreparedStatement ps = null;

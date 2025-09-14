@@ -20,7 +20,7 @@ public class Insercao {
         System.out.println("4 -  Menu Excluir");
         System.out.println("5 -  Perguntas Frequentes");
 
-        System.out.println("0 -  Finalizar");
+        System.out.println("0 -  FINALIZAR");
     }
 
     public static void menuCadastrar() {
@@ -28,7 +28,7 @@ public class Insercao {
         System.out.println("1  -  Cadastrar pacientes");
         System.out.println("2  -  Cadastrar Consultas Online");
         System.out.println("3  -  Cadastrar Médicos");
-        System.out.println("4  -  Cadastrar Exames");
+        System.out.println("4  -  Cadastrar Exames  (normal ou nao)");
         System.out.println("5  -  Cadastrar Historico das consultas");
 
         System.out.println("0  -  PARA SAIR DE CADASTRAR");
@@ -104,34 +104,33 @@ public class Insercao {
     public static Paciente leituraDados(Paciente paciente) {
         Scanner scanner = new Scanner(System.in);
 
-        // Ler ID do paciente com validação
         boolean idValido = false;
         while (!idValido) {
             try {
                 System.out.println("Id do paciente: ");
                 paciente.setId(scanner.nextInt());
-                scanner.nextLine();  // Consumir a quebra de linha
+                scanner.nextLine();
                 idValido = true;
             } catch (InputMismatchException e) {
                 System.out.println("Erro: Digite um número válido para o ID!");
-                scanner.nextLine();  // Limpar o input inválido
+                scanner.nextLine();
             }
         }
 
         System.out.println("Nome do paciente: ");
         paciente.setNome(scanner.nextLine());
 
-        // Ler CPF do paciente com validação
+
         boolean cpfValido = false;
         while (!cpfValido) {
             try {
-                System.out.println("CPF do paciente (apenas números): ");
-                paciente.setCpf(scanner.nextInt());
-                scanner.nextLine();  // Consumir a quebra de linha
+                System.out.println("CPF do paciente (apenas números - 11 digitos): ");
+                paciente.setCpf(scanner.nextLine());
+//                scanner.nextLine();
                 cpfValido = true;
             } catch (InputMismatchException e) {
                 System.out.println("Erro: Digite um número válido para o CPF (apenas números)!");
-                scanner.nextLine();  // Limpar o input inválido
+                scanner.nextLine();
             }
         }
 
@@ -202,7 +201,7 @@ public class Insercao {
         return exame;
     };
 
-    public static Historicoconsulta leituraDadoshistoricosconsultas(Historicoconsulta historicoconsulta){
+    public static HistoricoConsulta leituraDadoshistoricosconsultas(HistoricoConsulta historicoconsulta){
         Scanner leitor = new Scanner(System.in);
         Scanner leitorNum = new Scanner(System.in);
 
@@ -212,7 +211,7 @@ public class Insercao {
         System.out.println("Sintomas: ");
         historicoconsulta.setSintomas_historico(leitor.nextLine());
 
-        System.out.println("Diagnostico: ");
+        System.out.println("Diagnostico (grave | leve): ");
         historicoconsulta.setDiagnostico(leitor.nextLine());
 
         System.out.println("Observações: ");
@@ -285,30 +284,30 @@ public class Insercao {
         }
 
         class ListarExames{
-            private List<Exame> exameList;
+            private List<String> exameList;
 
             public ListarExames() {
                 ExameDao dao = new ExameDao();
-                this.exameList = dao.ListarExames();
+                this.exameList = dao.ListarExamesComResultado();
             }
 
             public void imprimirExames() {
-                for (Exame p : exameList) {
+                for (String p : exameList) {
                     System.out.println(p);
                 }
             }
         }
 
         class ListarhistoricosConsultas {
-            private List<Historicoconsulta> historicoconsultas;
+            private List<String> historicoconsultas;
 
             public ListarhistoricosConsultas() {
                 HistoricoConsultaDao dao = new HistoricoConsultaDao();
-                this.historicoconsultas = dao.ListarhistoricosConsultas();
+                this.historicoconsultas = dao.ListarHistoricosConsultasComDiagnosticoCritico();
             }
 
             public void imprimirHistoricos() {
-                for (Historicoconsulta p : historicoconsultas) {
+                for (String p : historicoconsultas) {
                     System.out.println(p);
                 }
             }
@@ -346,7 +345,7 @@ public class Insercao {
                         break;
                     case 2:
                         System.out.println("Digite o novo CPF:");
-                        int novoCpf = scanner.nextInt();
+                        String novoCpf = scanner.nextLine();
                         scanner.nextLine();
                         paciente.setCpf(novoCpf);
                         break;
@@ -524,7 +523,7 @@ public class Insercao {
                 int id = scanner.nextInt();
                 scanner.nextLine();
 
-                Historicoconsulta historico = dao.buscarPorIdhistorico(id);
+                HistoricoConsulta historico = dao.buscarPorIdhistorico(id);
                 if (historico == null) {
                     System.out.println("Consulta não encontrado!");
                     return;
@@ -640,8 +639,13 @@ public class Insercao {
                                 System.out.println("CADASTRAR PACIENTE" +
                                         "\n===============================================");
                                 Paciente novoPaciente = new Paciente();
-                                cadastros.cadastrarPacientefunc(leituraDados(novoPaciente));
-                                System.out.println("Paciente cadastrado com sucesso!");
+                                novoPaciente = leituraDados(novoPaciente);
+                                if (!novoPaciente.isCpfValido()) {
+                                    System.out.println("CPF inválido! O CPF deve ter exatamente 11 dígitos.");
+                                } else {
+                                    cadastros.cadastrarPacientefunc(novoPaciente);
+                                    System.out.println("Paciente cadastrado com sucesso!");
+                                }
                                 break;
 
                             case 2:
@@ -671,7 +675,7 @@ public class Insercao {
                             case 5:
                                 System.out.println("CADASTRAR HISTORICO DAS CONSULTAS" +
                                         "\n===============================================");
-                                Historicoconsulta historicoconsulta = new Historicoconsulta();
+                                HistoricoConsulta historicoconsulta = new HistoricoConsulta();
                                 historicoConsultaDao.cadastrarHistoricoConsulta(leituraDadoshistoricosconsultas(historicoconsulta));
                                 System.out.println("Hitorico de consulta cadastrado com sucesso!");
                                 break;

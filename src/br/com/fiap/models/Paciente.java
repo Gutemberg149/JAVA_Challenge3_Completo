@@ -3,7 +3,7 @@ package br.com.fiap.models;
 public class Paciente {
     private int id_paciente;
     private String nome_paciente;
-    private int cpf_paciente;
+    private String cpf_paciente;
 
     @Override
     public String toString() {
@@ -30,12 +30,19 @@ public class Paciente {
         this.nome_paciente = nome;
     }
 
-    public int getCpf() {
+    public String getCpf() {
         return cpf_paciente;
     }
 
-    public void setCpf(int cpf) {
+    public void setCpf(String cpf) {
         this.cpf_paciente = cpf;
     }
+
+
+    public boolean isCpfValido() {
+        return cpf_paciente.length()==11;
+    }
+
+
 
 }

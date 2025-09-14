@@ -29,6 +29,14 @@ public class Exame {
         this.resultado_exame = resultado_exame;
     }
 
+    public String verificarResultado() {
+        if (resultado_exame != null && resultado_exame.toLowerCase().contains("normal")) {
+            return "Resultado normal";
+        } else {
+            return "Resultado fora do padrão";
+        }
+    }
+
     @Override
     public String toString() {
         return "Exame: " +
