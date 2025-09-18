@@ -40,9 +40,8 @@ public class Exame {
     @Override
     public String toString() {
         return "Exame: " +
-                "ID do exame: " + id_exame + " | " +
-                "Nome do exame: " + nome_exame + " | " +
-                "Resultado do exame: " + resultado_exame + '\n' +
-                '}';
+                "ID: " + id_exame + " | " +
+                "Nome: " + nome_exame + " | " +
+                "Resultado: " + resultado_exame;
     }
 }

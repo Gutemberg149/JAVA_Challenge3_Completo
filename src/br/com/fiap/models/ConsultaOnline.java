@@ -1,21 +1,37 @@
 package br.com.fiap.models;
 
+import br.com.fiap.dao.ExameDao;
+
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ConsultaOnline {
     private int id_consulta;
     private LocalDate dataConsulta;
     private String status;
     private String link;
+    private Exame exame;
+    private List<Exame> listexame=new ArrayList<>();
+    
 
     @Override
     public String toString() {
         return "Consulta online:" +
-                "Id da consulta: " + id_consulta +
-                " | Data da consulta: " + dataConsulta +
-                " | Status da consulta: " + status +
-                " | Link da consulta: " + link +
+                "Id: " + id_consulta +
+                " | Data: " + dataConsulta +
+                " | Status: " + status +
+                " | Link: " + link +
+                " | " + (exame != null ? exame.toString() : "Nenhum exame associado") +
                 "\n------------------------------------\n";
+    }
+
+    public Exame getExame() {
+        return exame;
+    }
+
+    public void setExame(Exame exame) {
+        this.exame = exame;
     }
 
     public int getId_consulta() {

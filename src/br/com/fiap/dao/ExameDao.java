@@ -64,19 +64,20 @@ public class ExameDao {
         return examesComStatus;
     }
 
+
     public Exame buscarPorIdExame(int id){
         conexao = ConnectionFactory.obterConexao();
         PreparedStatement ps = null;
-        Exame exame = new Exame();
+        Exame exame = null; // Changed from new Exame() to null
         try {
-            ps = conexao.prepareStatement("SELECT * from TBL_HC_EXAME" +
-                    " WHERE id_exame = ?");
-            ps.setInt(1, id );
+            ps = conexao.prepareStatement("SELECT * from TBL_HC_EXAME WHERE id_exame = ?");
+            ps.setInt(1, id);
             ResultSet rs = ps.executeQuery();
             if(rs.next()){
-                exame.setNome_exame(rs.getString(1));
-                exame.setResultado_exame(rs.getString(2));
-
+                exame = new Exame(); // Create new instance only when record exists
+                exame.setId_exame(rs.getInt("id_exame")); // Fixed: set the ID first
+                exame.setNome_exame(rs.getString("nome_exame"));
+                exame.setResultado_exame(rs.getString("resultado_exame"));
             }
             ps.close();
             conexao.close();

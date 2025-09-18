@@ -12,6 +12,7 @@ import java.util.List;
 public class PacienteDao {
     private Connection conexao;
 
+
     public void cadastrarPacientefunc(Paciente paciente){
         if (!paciente.isCpfValido()) {
             throw new IllegalArgumentException("CPF inválido: deve ter exatamente 11 dígitos");
@@ -21,20 +22,30 @@ public class PacienteDao {
         PreparedStatement comandoSQL = null;
 
         try{
-            String sql = "INSERT INTO TBL_HC_PACIENTE(id_paciente, nome_paciente, cpf_paciente) values(?,?,?)";
-
+            String sql = "INSERT INTO TBL_HC_PACIENTE(id_paciente, nome_paciente, cpf_paciente, id_consulta) VALUES (?, ?, ?, ?)";
             comandoSQL = conexao.prepareStatement(sql);
 
-            comandoSQL.setInt(1,paciente.getId());
+            comandoSQL.setInt(1, paciente.getId());
             comandoSQL.setString(2, paciente.getNome());
             comandoSQL.setString(3, paciente.getCpf());
+
+
+            if (paciente.getConsultaOnline() != null) {
+                comandoSQL.setInt(4, paciente.getConsultaOnline().getId_consulta());
+            } else {
+
+                comandoSQL.setNull(4, java.sql.Types.INTEGER);
+                System.out.println("O médico a tem uma consulta vinculada a esse ID");
+            }
+
             comandoSQL.executeUpdate();
             comandoSQL.close();
             conexao.close();
-        }catch (SQLException e){
+        } catch (SQLException e){
             e.printStackTrace();
-        };
+        }
     }
+
 
     public List<Paciente> listarPacientes(){
         List<Paciente> pacientes = new ArrayList<>();
@@ -59,27 +70,34 @@ public class PacienteDao {
     }
 
     public Paciente buscarPorIdPaciente(int id){
-        conexao = ConnectionFactory.obterConexao();
-        PreparedStatement ps = null;
-        Paciente paciente = new Paciente();
-        try {
-            ps = conexao.prepareStatement("SELECT * from TBL_HC_PACIENTE  " +
-                    "WHERE id_paciente = ?");
-            ps.setInt(1, id );
-            ResultSet rs = ps.executeQuery();
-            if(rs.next()){
-                paciente.setId(rs.getInt(1));
-                paciente.setNome(rs.getString(2));
-                paciente.setCpf(rs.getString(3));
+    conexao = ConnectionFactory.obterConexao();
+    PreparedStatement ps = null;
+    Paciente paciente = new Paciente();
+    ConsultaOnlineDao consultaOnlineDao = new ConsultaOnlineDao();
+    try {
+        ps = conexao.prepareStatement("SELECT * from TBL_HC_PACIENTE WHERE id_paciente = ?");
+        ps.setInt(1, id);
+        ResultSet rs = ps.executeQuery();
+        if (rs.next()){
+            paciente.setId(rs.getInt("id_paciente"));           // Use column names for clarity
+            paciente.setNome(rs.getString("nome_paciente"));
+            paciente.setCpf(rs.getString("cpf_paciente"));
+            int codigoConsulta = rs.getInt("id_consulta");
 
+
+            if (codigoConsulta != 0) { // presumindo que zero ou null indica ausência
+                ConsultaOnline consulta = consultaOnlineDao.buscarPorIdConsultaOnline(codigoConsulta);
+                paciente.setConsultaOnline(consulta); // não esquecer de definir
             }
-            ps.close();
-            conexao.close();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
         }
-        return paciente;
+        rs.close();
+        ps.close();
+        conexao.close();
+    } catch (SQLException e) {
+        throw new RuntimeException(e);
     }
+    return paciente;
+}
 
     public void upDatePaciente(Paciente paciente){
         conexao = ConnectionFactory.obterConexao();

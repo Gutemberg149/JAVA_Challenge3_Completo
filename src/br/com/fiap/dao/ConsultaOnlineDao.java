@@ -1,6 +1,7 @@
 package br.com.fiap.dao;
 
 import br.com.fiap.models.ConsultaOnline;
+import br.com.fiap.models.Exame;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -13,13 +14,14 @@ import java.util.List;
 
 public class ConsultaOnlineDao {
     private Connection conexao;
+
     public void cadastrarConsultaOnline(ConsultaOnline consultaOnline){
         conexao = ConnectionFactory.obterConexao();
 
         PreparedStatement comandoSQL = null;
 
         try{
-            String sql = "INSERT INTO TBL_HC_CONSULTA_ONLINE(id_consulta, dataConsulta, status, link) values(?,?,?,?)";
+            String sql = "INSERT INTO TBL_HC_CONSULTA_ONLINE(id_consulta, data_Consulta, status, link, id_exame) values(?,?,?,?,?)";
 
             comandoSQL = conexao.prepareStatement(sql);
 
@@ -27,6 +29,14 @@ public class ConsultaOnlineDao {
             comandoSQL.setDate(2, java.sql.Date.valueOf(consultaOnline.getDataConsulta()));
             comandoSQL.setString(3, consultaOnline.getStatus());
             comandoSQL.setString(4, consultaOnline.getLink());
+
+
+            if (consultaOnline.getExame() != null) {
+                comandoSQL.setInt(5, consultaOnline.getExame().getId_exame());
+            } else {
+
+                comandoSQL.setNull(5, java.sql.Types.INTEGER);
+            }
 
             comandoSQL.executeUpdate();
             comandoSQL.close();
@@ -48,7 +58,7 @@ public class ConsultaOnlineDao {
                 ConsultaOnline consulta = new ConsultaOnline();
                 consulta.setId_consulta(rs.getInt("ID_CONSULTA"));
 
-                java.sql.Date dataSql = rs.getDate("DATACONSULTA");
+                java.sql.Date dataSql = rs.getDate("DATA_CONSULTA");
                 if (dataSql != null) {
                     consulta.setDataConsulta(dataSql.toLocalDate());
                 }
@@ -66,43 +76,55 @@ public class ConsultaOnlineDao {
         return consultas;
     }
 
-    public ConsultaOnline buscarPorIdConsultaOnline(int id){
-        conexao = ConnectionFactory.obterConexao();
-        PreparedStatement ps = null;
-        ConsultaOnline consulta = null;
-        try {
-            String sql = "SELECT * FROM TBL_HC_CONSULTA_ONLINE WHERE id_consulta = ?";
-            ps = conexao.prepareStatement(sql);
-            ps.setInt(1, id);
-            ResultSet rs = ps.executeQuery();
 
-            if (rs.next()) {
-                consulta = new ConsultaOnline();
-                consulta.setId_consulta(rs.getInt("ID_CONSULTA"));
+public ConsultaOnline buscarPorIdConsultaOnline(int id){
+    conexao = ConnectionFactory.obterConexao();
+    PreparedStatement ps = null;
+    ConsultaOnline consulta = null;
+    ExameDao exameDao = new ExameDao();
+    try {
+        String sql = "SELECT * FROM TBL_HC_CONSULTA_ONLINE WHERE id_consulta = ?";
+        ps = conexao.prepareStatement(sql);
+        ps.setInt(1, id);
+        ResultSet rs = ps.executeQuery();
 
-                java.sql.Date dataSql = rs.getDate("DATACONSULTA");
-                if (dataSql != null) {
-                    consulta.setDataConsulta(dataSql.toLocalDate());
-                }
+        if (rs.next()) {
+            consulta = new ConsultaOnline();
+            consulta.setId_consulta(rs.getInt("ID_CONSULTA"));
 
-                consulta.setStatus(rs.getString("STATUS"));
-                consulta.setLink(rs.getString("LINK"));
+            java.sql.Date dataSql = rs.getDate("DATA_CONSULTA");
+            if (dataSql != null) {
+                consulta.setDataConsulta(dataSql.toLocalDate());
             }
 
-            rs.close();
-            ps.close();
-            conexao.close();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        return consulta;
-    }
+            consulta.setStatus(rs.getString("STATUS"));
+            consulta.setLink(rs.getString("LINK"));
 
+
+            int codigoExame = rs.getInt("id_exame");
+            if (!rs.wasNull()) {
+                Exame exame = exameDao.buscarPorIdExame(codigoExame);
+                if (exame != null) {
+                    consulta.setExame(exame);
+                } else {
+                    System.out.println("DEBUG: Exame com ID " + codigoExame + " não encontrado na tabela TBL_HC_EXAME");
+                }
+            }
+        }
+
+        rs.close();
+        ps.close();
+        conexao.close();
+    } catch (SQLException e) {
+        throw new RuntimeException(e);
+    }
+    return consulta;
+}
     public void upDateConsultaOnline(ConsultaOnline consultaOnline){
         conexao = ConnectionFactory.obterConexao();
         PreparedStatement ps = null;
         try{
-            String sql = "UPDATE TBL_HC_CONSULTA_ONLINE SET  dataConsulta = ?, status = ?,link = ?";
+            String sql = "UPDATE TBL_HC_CONSULTA_ONLINE SET  data_Consulta = ?, status = ?,link = ?";
             ps = conexao.prepareStatement(sql);
             ps.setDate(1, java.sql.Date.valueOf(consultaOnline.getDataConsulta()));
             ps.setString(2, consultaOnline.getStatus());

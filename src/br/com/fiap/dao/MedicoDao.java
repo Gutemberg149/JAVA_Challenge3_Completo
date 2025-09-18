@@ -1,5 +1,6 @@
 package br.com.fiap.dao;
 
+import br.com.fiap.models.ConsultaOnline;
 import br.com.fiap.models.Medico;
 
 import java.sql.Connection;
@@ -11,6 +12,7 @@ import java.util.List;
 
 public class MedicoDao {
     private Connection conexao;
+
     public void cadastrarMedico(Medico medico) {
         conexao = ConnectionFactory.obterConexao();
 
@@ -19,13 +21,20 @@ public class MedicoDao {
         try {
 
 
-            String sql = "INSERT INTO TBL_HC_MEDICOS(id_medico, especialidade, crm) values(?,?,?)";
+            String sql = "INSERT INTO TBL_HC_MEDICOS(id_medico, especialidade, crm,id_consulta) values(?,?,?,?)";
 
             comandoSQL = conexao.prepareStatement(sql);
 
             comandoSQL.setInt(1, medico.getId_medico());
             comandoSQL.setString(2, medico.getEspecialidade());
             comandoSQL.setInt(3, medico.getCrm());
+
+            if (medico.getConsultaOnline() != null) {
+                comandoSQL.setInt(4, medico.getConsultaOnline().getId_consulta());
+            } else {
+
+                comandoSQL.setNull(4, java.sql.Types.INTEGER);
+            }
 
             comandoSQL.executeUpdate();
             comandoSQL.close();
@@ -63,6 +72,7 @@ public class MedicoDao {
         conexao = ConnectionFactory.obterConexao();
         PreparedStatement ps = null;
         Medico medico = new Medico();
+        ConsultaOnlineDao consultaOnlineDao = new ConsultaOnlineDao();
         try {
             ps = conexao.prepareStatement("SELECT * from TBL_HC_MEDICOS" +
                     " WHERE id_medico = ?");
@@ -72,6 +82,12 @@ public class MedicoDao {
                 medico.setId_medico(rs.getInt(1));
                 medico.setEspecialidade(rs.getString(2));
                 medico.setCrm(rs.getInt(3));
+                int codigoConsulta = rs.getInt("id_consulta");
+
+                if (codigoConsulta != 0) { // presumindo que zero ou null indica ausência
+                    ConsultaOnline consulta = consultaOnlineDao.buscarPorIdConsultaOnline(codigoConsulta);
+                    medico.setConsultaOnline(consulta); // não esquecer de definir
+                }
 
             }
             ps.close();
