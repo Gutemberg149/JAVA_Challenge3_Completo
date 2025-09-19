@@ -3,6 +3,7 @@ import br.com.fiap.dao.*;
 import br.com.fiap.enums.PerguntasEnum;
 import br.com.fiap.models.*;
 
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.time.LocalDate;
 import java.util.InputMismatchException;
 import java.util.List;
@@ -100,7 +101,7 @@ public class Insercao {
         }
     }
 
-    public static Paciente leituraDados(Paciente paciente) {
+    public static Paciente leituraDados(Paciente paciente) throws SQLIntegrityConstraintViolationException {
     Scanner scanner = new Scanner(System.in);
     ConsultaOnlineDao consultaDao = new ConsultaOnlineDao();
 
@@ -207,135 +208,132 @@ public class Insercao {
 }
 
 
-public static ConsultaOnline leituraDadosConsultaOnline(ConsultaOnline consultaOnline) {
-    Scanner scanner = new Scanner(System.in);
-    ExameDao exameDao = new ExameDao();
+    public static ConsultaOnline leituraDadosConsultaOnline(ConsultaOnline consultaOnline) {
+        Scanner scanner = new Scanner(System.in);
+        ExameDao exameDao = new ExameDao();
 
-
-    boolean idValido = false;
-    while (!idValido) {
-        try {
-            System.out.println("Id da consulta: ");
-            consultaOnline.setId_consulta(scanner.nextInt());
-            scanner.nextLine();
-            idValido = true;
-        } catch (InputMismatchException e) {
-            System.out.println("Erro: Digite um número válido para o ID da consulta!");
-            scanner.nextLine();
-        }
-    }
-
-
-    boolean dataValida = false;
-    while (!dataValida) {
-        try {
-            System.out.print("Digite o dia da consulta (1-31): ");
-            int dia = scanner.nextInt();
-            System.out.print("Digite o mês da consulta (1-12): ");
-            int mes = scanner.nextInt();
-            System.out.print("Digite o ano da consulta (ex: 2024): ");
-            int ano = scanner.nextInt();
-            scanner.nextLine();
-
-            consultaOnline.setDataConsulta(LocalDate.of(ano, mes, dia));
-            dataValida = true;
-        } catch (Exception e) {
-            System.out.println("Data inválida. Tente novamente.");
-            scanner.nextLine();
-        }
-    }
-
-    System.out.println("Status da consulta: ");
-    consultaOnline.setStatus(scanner.nextLine());
-
-    System.out.println("Link da consulta: ");
-    consultaOnline.setLink(scanner.nextLine());
-
-
-    System.out.println("Deseja associar um exame? (s/n): ");
-    String resposta = scanner.nextLine().trim().toLowerCase();
-    if (resposta.equals("s")) {
-        boolean idExameValido = false;
-        int idExame = 0;
-        while (!idExameValido) {
+        boolean idValido = false;
+        while (!idValido) {
             try {
-                System.out.println("ID do exame: ");
-                idExame = scanner.nextInt();
-                scanner.nextLine();
-                idExameValido = true;
+                System.out.println("Id da consulta: ");
+                consultaOnline.setId_consulta(scanner.nextInt());
+                scanner.nextLine(); // Consumir a quebra de linha pendente
+                idValido = true;
             } catch (InputMismatchException e) {
-                System.out.println("Erro: Digite um número válido para o ID do exame!");
-                scanner.nextLine();
+                System.out.println("Erro: Digite um número válido para o ID da consulta!");
+                scanner.nextLine(); // Limpar buffer
             }
         }
 
-        Exame exame = exameDao.buscarPorIdExame(idExame);
+        boolean dataValida = false;
+        while (!dataValida) {
+            try {
+                System.out.print("Digite o dia da consulta (1-31): ");
+                int dia = scanner.nextInt();
+                System.out.print("Digite o mês da consulta (1-12): ");
+                int mes = scanner.nextInt();
+                System.out.print("Digite o ano da consulta (ex: 2024): ");
+                int ano = scanner.nextInt();
+                scanner.nextLine(); // Consumir a quebra de linha pendente
 
-        if (exame == null) {
-            System.out.println("Exame não encontrado. Por favor, informe os dados do novo exame.");
+                consultaOnline.setDataConsulta(LocalDate.of(ano, mes, dia));
+                dataValida = true;
+            } catch (Exception e) {
+                System.out.println("Data inválida. Tente novamente.");
+                scanner.nextLine(); // Limpar buffer
+            }
+        }
 
-            exame = new Exame();
-            exame.setId_exame(idExame);
+        System.out.println("Status da consulta: ");
+        consultaOnline.setStatus(scanner.nextLine());
 
-            System.out.println("Nome do exame: ");
-            exame.setNome_exame(scanner.nextLine());
+        System.out.println("Link da consulta: ");
+        consultaOnline.setLink(scanner.nextLine());
 
-            System.out.println("Resultado do exame: ");
-            exame.setResultado_exame(scanner.nextLine());
+        System.out.println("Deseja associar um exame? (s/n): ");
+        String resposta = scanner.nextLine().trim().toLowerCase();
+        if (resposta.equals("s")) {
+            boolean idExameValido = false;
+            int idExame = 0;
+            while (!idExameValido) {
+                try {
+                    System.out.println("ID do exame: ");
+                    idExame = scanner.nextInt();
+                    scanner.nextLine(); // Consumir a quebra de linha pendente
+                    idExameValido = true;
+                } catch (InputMismatchException e) {
+                    System.out.println("Erro: Digite um número válido para o ID do exame!");
+                    scanner.nextLine(); // Limpar buffer
+                }
+            }
 
-            exameDao.cadastrarExame(exame);
-            System.out.println("Novo exame cadastrado com sucesso.");
-        } else {
-            System.out.println("Exame encontrado: " + exame);
-            System.out.println("Deseja usar este exame existente? (s/n): ");
-            String usarExistente = scanner.nextLine().trim().toLowerCase();
+            Exame exame = exameDao.buscarPorIdExame(idExame);
 
-            if (!usarExistente.equals("s")) {
+            if (exame == null) {
+                System.out.println("Exame não encontrado. Por favor, informe os dados do novo exame.");
 
-                boolean novoIdValido = false;
-                while (!novoIdValido) {
-                    try {
-                        System.out.println("Digite um novo ID para o exame: ");
-                        int novoId = scanner.nextInt();
-                        scanner.nextLine();
+                exame = new Exame();
+                exame.setId_exame(idExame);
 
+                System.out.println("Nome do exame: ");
+                exame.setNome_exame(scanner.nextLine());
 
-                        Exame exameExistente = exameDao.buscarPorIdExame(novoId);
-                        if (exameExistente != null) {
-                            System.out.println("Este ID já existe. Escolha outro ID.");
-                            continue;
+                System.out.println("Resultado do exame: ");
+                exame.setResultado_exame(scanner.nextLine());
+
+                exameDao.cadastrarExame(exame);
+                System.out.println("Novo exame cadastrado com sucesso.");
+            } else {
+                System.out.println("Exame encontrado: " + exame);
+                System.out.println("Deseja usar este exame existente? (s/n): ");
+                String usarExistente = scanner.nextLine().trim().toLowerCase();
+
+                if (!usarExistente.equals("s")) {
+
+                    boolean novoIdValido = false;
+                    while (!novoIdValido) {
+                        try {
+                            System.out.println("Digite um novo ID para o exame: ");
+                            int novoId = scanner.nextInt();
+                            scanner.nextLine(); // Consumir a quebra de linha pendente
+
+                            Exame exameExistente = exameDao.buscarPorIdExame(novoId);
+                            if (exameExistente != null) {
+                                System.out.println("Este ID já existe. Escolha outro ID.");
+                                continue;
+                            }
+
+                            exame = new Exame();
+                            exame.setId_exame(novoId);
+
+                            System.out.println("Nome do exame: ");
+                            exame.setNome_exame(scanner.nextLine());
+
+                            System.out.println("Resultado do exame: ");
+                            exame.setResultado_exame(scanner.nextLine());
+
+                            exameDao.cadastrarExame(exame);
+                            System.out.println("Novo exame cadastrado com sucesso.");
+                            novoIdValido = true;
+                        } catch (InputMismatchException e) {
+                            System.out.println("Erro: Digite um número válido para o ID!");
+                            scanner.nextLine(); // Limpar buffer
                         }
-
-                        exame = new Exame();
-                        exame.setId_exame(novoId);
-
-                        System.out.println("Nome do exame: ");
-                        exame.setNome_exame(scanner.nextLine());
-
-                        System.out.println("Resultado do exame: ");
-                        exame.setResultado_exame(scanner.nextLine());
-
-                        exameDao.cadastrarExame(exame);
-                        System.out.println("Novo exame cadastrado com sucesso.");
-                        novoIdValido = true;
-                    } catch (InputMismatchException e) {
-                        System.out.println("Erro: Digite um número válido para o ID!");
-                        scanner.nextLine();
                     }
                 }
             }
+
+            consultaOnline.setExame(exame);
+        } else {
+            consultaOnline.setExame(null);
         }
 
-        consultaOnline.setExame(exame);
-    } else {
-        consultaOnline.setExame(null);
+        System.out.println(consultaOnline);
+        return consultaOnline;
     }
 
-    System.out.println(consultaOnline);
-    return consultaOnline;
-}
 
-    public static Medico leituraDadosMedicos(Medico medico) {
+    public static Medico leituraDadosMedicos(Medico medico) throws SQLIntegrityConstraintViolationException {
         Scanner scanner = new Scanner(System.in);
         ConsultaOnlineDao consultaDao = new ConsultaOnlineDao();
 
@@ -450,27 +448,350 @@ public static ConsultaOnline leituraDadosConsultaOnline(ConsultaOnline consultaO
         return exame;
     };
 
-    public static HistoricoConsulta leituraDadoshistoricosconsultas(HistoricoConsulta historicoconsulta){
-        Scanner leitor = new Scanner(System.in);
-        Scanner leitorNum = new Scanner(System.in);
+//    public static HistoricoConsulta leituraDadoshistoricosconsultas(HistoricoConsulta historicoconsulta){
+//        Scanner leitor = new Scanner(System.in);
+//        Scanner leitorNum = new Scanner(System.in);
+//
+//        System.out.println("Id do Historico: ");
+//        historicoconsulta.setId_historico(leitorNum.nextInt());
+//
+//        System.out.println("Sintomas: ");
+//        historicoconsulta.setSintomas_historico(leitor.nextLine());
+//
+//        System.out.println("Diagnostico (grave | leve): ");
+//        historicoconsulta.setDiagnostico(leitor.nextLine());
+//
+//        System.out.println("Observações: ");
+//        historicoconsulta.setObservacao(leitor.nextLine());
+//
+//        return historicoconsulta;
+//    };
 
-        System.out.println("Id do Historico: ");
-        historicoconsulta.setId_historico(leitorNum.nextInt());
+//    public static HistoricoConsulta leituraDadoshistoricosconsultas(HistoricoConsulta historicoconsulta) {
+//        Scanner scanner = new Scanner(System.in);
+//        ConsultaOnlineDao consultaDao = new ConsultaOnlineDao();
+//
+//        // Entrada do ID do histórico
+//        boolean idValido = false;
+//        while (!idValido) {
+//            try {
+//                System.out.println("Id do Histórico: ");
+//                historicoconsulta.setId_historico(scanner.nextInt());
+//                scanner.nextLine();
+//                idValido = true;
+//            } catch (InputMismatchException e) {
+//                System.out.println("Erro: Digite um número válido para o ID!");
+//                scanner.nextLine();
+//            }
+//        }
+//
+//        // Entrada dos sintomas
+//        System.out.println("Sintomas: ");
+//        historicoconsulta.setSintomas_historico(scanner.nextLine());
+//
+//        // Entrada do diagnóstico
+//        System.out.println("Diagnóstico (grave | leve): ");
+//        historicoconsulta.setDiagnostico(scanner.nextLine());
+//
+//        // Entrada das observações
+//        System.out.println("Observações: ");
+//        historicoconsulta.setObservacao(scanner.nextLine());
+//
+//        // Perguntar se deseja associar uma consulta online
+//        System.out.println("Deseja associar uma consulta online? (s/n): ");
+//        String resposta = scanner.nextLine().trim().toLowerCase();
+//
+//        if (resposta.equals("s")) {
+//            boolean idConsultaValido = false;
+//            int idConsulta = 0;
+//            while (!idConsultaValido) {
+//                try {
+//                    System.out.println("ID da consulta online: ");
+//                    idConsulta = scanner.nextInt();
+//                    scanner.nextLine();
+//                    idConsultaValido = true;
+//                } catch (InputMismatchException e) {
+//                    System.out.println("Erro: Digite um número válido para o ID da consulta!");
+//                    scanner.nextLine();
+//                }
+//            }
+//
+//            ConsultaOnline consulta = consultaDao.buscarPorIdConsultaOnline(idConsulta);
+//
+//            if (consulta == null) {
+//                System.out.println("Consulta online não encontrada. Por favor, informe os dados da nova consulta.");
+//
+//                consulta = new ConsultaOnline();
+//                consulta.setId_consulta(idConsulta);
+//
+//                boolean dataValida = false;
+//                while (!dataValida) {
+//                    try {
+//                        System.out.print("Digite o dia da consulta (1-31): ");
+//                        int dia = scanner.nextInt();
+//                        System.out.print("Digite o mês da consulta (1-12): ");
+//                        int mes = scanner.nextInt();
+//                        System.out.print("Digite o ano da consulta (ex: 2024): ");
+//                        int ano = scanner.nextInt();
+//                        scanner.nextLine();
+//
+//                        consulta.setDataConsulta(LocalDate.of(ano, mes, dia));
+//                        dataValida = true;
+//                    } catch (Exception e) {
+//                        System.out.println("Data inválida. Tente novamente.");
+//                        scanner.nextLine();
+//                    }
+//                }
+//
+//                System.out.println("Status da consulta: ");
+//                consulta.setStatus(scanner.nextLine());
+//
+//                System.out.println("Link da consulta: ");
+//                consulta.setLink(scanner.nextLine());
+//
+//                consultaDao.cadastrarConsultaOnline(consulta);
+//                System.out.println("Nova consulta online cadastrada com sucesso.");
+//            } else {
+//                System.out.println("Consulta online encontrada e associada ao histórico.");
+//            }
+//
+//            historicoconsulta.setConsultaOnline(consulta);
+//        } else {
+//            historicoconsulta.setConsultaOnline(null);
+//        }
+//
+//        System.out.println(historicoconsulta);
+//        return historicoconsulta;
+//    }
 
-        System.out.println("Sintomas: ");
-        historicoconsulta.setSintomas_historico(leitor.nextLine());
+//    public static HistoricoConsulta leituraDadoshistoricosconsultas(HistoricoConsulta historicoconsulta) {
+//        Scanner scanner = new Scanner(System.in);
+//        ConsultaOnlineDao consultaDao = new ConsultaOnlineDao();
+//
+//        // Entrada do ID do histórico
+//        boolean idValido = false;
+//        while (!idValido) {
+//            try {
+//                System.out.println("Id do Histórico: ");
+//                historicoconsulta.setId_historico(scanner.nextInt());
+//                scanner.nextLine();
+//                idValido = true;
+//            } catch (InputMismatchException e) {
+//                System.out.println("Erro: Digite um número válido para o ID!");
+//                scanner.nextLine();
+//            }
+//        }
+//
+//        // Entrada dos sintomas
+//        System.out.println("Sintomas: ");
+//        historicoconsulta.setSintomas_historico(scanner.nextLine());
+//
+//        // Entrada do diagnóstico
+//        System.out.println("Diagnóstico (grave | leve): ");
+//        historicoconsulta.setDiagnostico(scanner.nextLine());
+//
+//        // Entrada das observações
+//        System.out.println("Observações: ");
+//        historicoconsulta.setObservacao(scanner.nextLine());
+//
+//        // Perguntar se deseja associar uma consulta online
+//        System.out.println("Deseja associar uma consulta online? (s/n): ");
+//        String resposta = scanner.nextLine().trim().toLowerCase();
+//
+//        if (resposta.equals("s")) {
+//            boolean idConsultaValido = false;
+//            int idConsulta = 0;
+//            ConsultaOnline consulta = null;
+//
+//            while (!idConsultaValido) {
+//                try {
+//                    System.out.println("ID da consulta online: ");
+//                    idConsulta = scanner.nextInt();
+//                    scanner.nextLine(); // Limpar o buffer
+//
+//                    consulta = consultaDao.buscarPorIdConsultaOnline(idConsulta);
+//
+//                    if (consulta != null) {
+//                        // Consulta já existe com esse ID
+//                        System.out.println("Já existe uma consulta com esse ID. Por favor, informe outro ID.");
+//                    } else {
+//                        // ID disponível, podemos cadastrar
+//                        idConsultaValido = true;
+//                    }
+//                } catch (InputMismatchException e) {
+//                    System.out.println("Erro: Digite um número válido para o ID da consulta!");
+//                    scanner.nextLine();
+//                }
+//            }
+//
+//            // Após obter um ID válido, verificar se a consulta existe (não deve, pois já validamos)
+//            consulta = consultaDao.buscarPorIdConsultaOnline(idConsulta);
+//
+//            if (consulta == null) {
+//                // Criar nova consulta
+//                consulta = new ConsultaOnline();
+//                consulta.setId_consulta(idConsulta);
+//
+//                // Dados da data
+//                boolean dataValida = false;
+//                while (!dataValida) {
+//                    try {
+//                        System.out.print("Digite o dia da consulta (1-31): ");
+//                        int dia = scanner.nextInt();
+//                        System.out.print("Digite o mês da consulta (1-12): ");
+//                        int mes = scanner.nextInt();
+//                        System.out.print("Digite o ano da consulta (ex: 2024): ");
+//                        int ano = scanner.nextInt();
+//                        scanner.nextLine(); // Limpar buffer
+//
+//                        consulta.setDataConsulta(LocalDate.of(ano, mes, dia));
+//                        dataValida = true;
+//                    } catch (Exception e) {
+//                        System.out.println("Data inválida. Tente novamente.");
+//                        scanner.nextLine();
+//                    }
+//                }
+//
+//                System.out.println("Status da consulta: ");
+//                consulta.setStatus(scanner.nextLine());
+//
+//                System.out.println("Link da consulta: ");
+//                consulta.setLink(scanner.nextLine());
+//
+//                // Cadastrar a nova consulta
+//                consultaDao.cadastrarConsultaOnline(consulta);
+//                System.out.println("Nova consulta online cadastrada com sucesso.");
+//            } else {
+//                System.out.println("Consulta online encontrada e associada ao histórico.");
+//            }
+//
+//            historicoconsulta.setConsultaOnline(consulta);
+//        } else {
+//            historicoconsulta.setConsultaOnline(null);
+//        }
+//
+//        System.out.println(historicoconsulta);
+//        return historicoconsulta;
+//    }
+public static HistoricoConsulta leituraDadoshistoricosconsultas(HistoricoConsulta historicoconsulta) {
+    Scanner scanner = new Scanner(System.in);
+    ConsultaOnlineDao consultaDao = new ConsultaOnlineDao();
 
-        System.out.println("Diagnostico (grave | leve): ");
-        historicoconsulta.setDiagnostico(leitor.nextLine());
+    // Entrada do ID do histórico
+    boolean idValido = false;
+    while (!idValido) {
+        try {
+            System.out.println("Id do Histórico: ");
+            historicoconsulta.setId_historico(scanner.nextInt());
+            scanner.nextLine();
+            idValido = true;
+        } catch (InputMismatchException e) {
+            System.out.println("Erro: Digite um número válido para o ID!");
+            scanner.nextLine();
+        }
+    }
 
-        System.out.println("Observações: ");
-        historicoconsulta.setObservacao(leitor.nextLine());
+    // Entrada dos sintomas
+    System.out.println("Sintomas: ");
+    historicoconsulta.setSintomas_historico(scanner.nextLine());
 
-        return historicoconsulta;
-    };
+    // Entrada do diagnóstico
+    System.out.println("Diagnóstico (grave | leve): ");
+    historicoconsulta.setDiagnostico(scanner.nextLine());
 
+    // Entrada das observações
+    System.out.println("Observações: ");
+    historicoconsulta.setObservacao(scanner.nextLine());
 
-    public static void main(String[] args) {
+    // Perguntar se deseja associar uma consulta online
+    System.out.println("Deseja associar uma consulta online? (s/n): ");
+    String resposta = scanner.nextLine().trim().toLowerCase();
+
+    if (resposta.equals("s")) {
+        boolean idConsultaValido = false;
+        int idConsulta = 0;
+        ConsultaOnline consulta = null;
+
+        while (!idConsultaValido) {
+            try {
+                System.out.println("ID da consulta online: ");
+                idConsulta = scanner.nextInt();
+                scanner.nextLine(); // Limpar o buffer
+
+                // VERIFICAÇÃO CORRIGIDA: Buscar se já existe uma consulta com este ID
+                consulta = consultaDao.buscarPorIdConsultaOnline(idConsulta);
+
+                if (consulta != null) {
+                    // Consulta já existe com esse ID - perguntar se quer usar existente
+                    System.out.println("Já existe uma consulta com o ID " + idConsulta +
+                            ". Deseja usar esta consulta? (s/n): ");
+                    String usarExistente = scanner.nextLine().trim().toLowerCase();
+
+                    if (usarExistente.equals("s")) {
+                        idConsultaValido = true;
+                        System.out.println("Consulta existente associada ao histórico.");
+                    } else {
+                        System.out.println("Por favor, informe outro ID.");
+                    }
+                } else {
+                    // ID disponível, podemos cadastrar nova consulta
+                    idConsultaValido = true;
+
+                    // Criar nova consulta
+                    consulta = new ConsultaOnline();
+                    consulta.setId_consulta(idConsulta);
+
+                    // Dados da data
+                    boolean dataValida = false;
+                    while (!dataValida) {
+                        try {
+                            System.out.print("Digite o dia da consulta (1-31): ");
+                            int dia = scanner.nextInt();
+                            System.out.print("Digite o mês da consulta (1-12): ");
+                            int mes = scanner.nextInt();
+                            System.out.print("Digite o ano da consulta (ex: 2024): ");
+                            int ano = scanner.nextInt();
+                            scanner.nextLine(); // Limpar buffer
+
+                            consulta.setDataConsulta(LocalDate.of(ano, mes, dia));
+                            dataValida = true;
+                        } catch (Exception e) {
+                            System.out.println("Data inválida. Tente novamente.");
+                            scanner.nextLine();
+                        }
+                    }
+
+                    System.out.println("Status da consulta: ");
+                    consulta.setStatus(scanner.nextLine());
+
+                    System.out.println("Link da consulta: ");
+                    consulta.setLink(scanner.nextLine());
+
+                    // Cadastrar a nova consulta
+                    try {
+                        consultaDao.cadastrarConsultaOnline(consulta);
+                        System.out.println("Nova consulta online cadastrada com sucesso.");
+                    } catch (Exception e) {
+                        System.out.println("Erro ao cadastrar consulta: " + e.getMessage());
+                        // Em caso de erro, resetar o flag para tentar novamente
+                        idConsultaValido = false;
+                    }
+                }
+            } catch (InputMismatchException e) {
+                System.out.println("Erro: Digite um número válido para o ID da consulta!");
+                scanner.nextLine();
+            }
+        }
+
+        historicoconsulta.setConsultaOnline(consulta);
+    } else {
+        historicoconsulta.setConsultaOnline(null);
+    }
+
+    System.out.println(historicoconsulta);
+    return historicoconsulta;
+}
+    public static void main(String[] args) throws SQLIntegrityConstraintViolationException {
 
         Scanner leitorNum = new Scanner(System.in);
         PacienteDao cadastros = new PacienteDao();
@@ -548,15 +869,15 @@ public static ConsultaOnline leituraDadosConsultaOnline(ConsultaOnline consultaO
         }
 
         class ListarhistoricosConsultas {
-            private List<String> historicoconsultas;
+            private List<HistoricoConsulta> historicoconsultas;
 
             public ListarhistoricosConsultas() {
                 HistoricoConsultaDao dao = new HistoricoConsultaDao();
-                this.historicoconsultas = dao.ListarHistoricosConsultasComDiagnosticoCritico();
+                this.historicoconsultas = dao.listarTodosHistoricos();
             }
 
             public void imprimirHistoricos() {
-                for (String p : historicoconsultas) {
+                for (HistoricoConsulta p : historicoconsultas) {
                     System.out.println(p);
                 }
             }

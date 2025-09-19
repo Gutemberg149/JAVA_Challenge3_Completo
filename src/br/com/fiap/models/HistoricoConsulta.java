@@ -1,10 +1,15 @@
 package br.com.fiap.models;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class HistoricoConsulta {
     private int id_historico;
     private String sintomas_historico;
     private String diagnostico;
     private String observacao;
+    private ConsultaOnline consultaOnline;
+    private List<ConsultaOnline> listconsultaOnline =new ArrayList<>();
 
     public boolean isDiagnosticoCritical() {
         if (diagnostico != null && diagnostico.toLowerCase().contains("grave")) {
@@ -20,7 +25,16 @@ public class HistoricoConsulta {
                 " | sintomas historico: " + sintomas_historico +
                 " | diagnostico: " + diagnostico +
                 " | Observações: " + observacao +
+                " | " + (consultaOnline != null ? consultaOnline : "Nenhuma consulta associada") +
                 "\n------------------------------------\n";
+    }
+
+    public ConsultaOnline getConsultaOnline() {
+        return consultaOnline;
+    }
+
+    public void setConsultaOnline(ConsultaOnline consultaOnline) {
+        this.consultaOnline = consultaOnline;
     }
 
     public int getId_historico() {

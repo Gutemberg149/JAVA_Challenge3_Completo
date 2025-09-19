@@ -47,27 +47,37 @@ public class PacienteDao {
     }
 
 
-    public List<Paciente> listarPacientes(){
-        List<Paciente> pacientes = new ArrayList<>();
-        conexao = ConnectionFactory.obterConexao();
-        PreparedStatement ps = null;
-        try{
-            ps = conexao.prepareStatement("SELECT * FROM TBL_HC_PACIENTE order by nome_paciente ");
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()){
-                Paciente paciente = new Paciente();
-                paciente.setId(rs.getInt(1));
-                paciente.setNome(rs.getString(2));
-                paciente.setCpf(rs.getString(3));
-                pacientes.add(paciente);
+public List<Paciente> listarPacientes() {
+    List<Paciente> pacientes = new ArrayList<>();
+    conexao = ConnectionFactory.obterConexao();
+    PreparedStatement ps = null;
+    ConsultaOnlineDao consultaDao = new ConsultaOnlineDao(); // Instância para buscar consultas
+    try {
+        ps = conexao.prepareStatement("SELECT * FROM TBL_HC_PACIENTE ORDER BY nome_paciente");
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            Paciente paciente = new Paciente();
+            paciente.setId(rs.getInt("id_paciente"));
+            paciente.setNome(rs.getString("nome_paciente"));
+            paciente.setCpf(rs.getString("cpf_paciente"));
+
+            int idConsulta = rs.getInt("id_consulta");
+            if (!rs.wasNull()) {
+                ConsultaOnline consulta = consultaDao.buscarPorIdConsultaOnline(idConsulta);
+                paciente.setConsultaOnline(consulta);
+            } else {
+                paciente.setConsultaOnline(null);
             }
-            ps.close();
-            conexao.close();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+
+            pacientes.add(paciente);
         }
-        return pacientes;
+        ps.close();
+        conexao.close();
+    } catch (SQLException e) {
+        throw new RuntimeException(e);
     }
+    return pacientes;
+}
 
     public Paciente buscarPorIdPaciente(int id){
     conexao = ConnectionFactory.obterConexao();

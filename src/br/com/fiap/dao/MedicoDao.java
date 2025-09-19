@@ -20,7 +20,6 @@ public class MedicoDao {
 
         try {
 
-
             String sql = "INSERT INTO TBL_HC_MEDICOS(id_medico, especialidade, crm,id_consulta) values(?,?,?,?)";
 
             comandoSQL = conexao.prepareStatement(sql);
@@ -84,9 +83,9 @@ public class MedicoDao {
                 medico.setCrm(rs.getInt(3));
                 int codigoConsulta = rs.getInt("id_consulta");
 
-                if (codigoConsulta != 0) { // presumindo que zero ou null indica ausência
+                if (codigoConsulta != 0) {
                     ConsultaOnline consulta = consultaOnlineDao.buscarPorIdConsultaOnline(codigoConsulta);
-                    medico.setConsultaOnline(consulta); // não esquecer de definir
+                    medico.setConsultaOnline(consulta);
                 }
 
             }
