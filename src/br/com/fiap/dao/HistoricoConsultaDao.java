@@ -10,37 +10,6 @@ import java.util.List;
 public class HistoricoConsultaDao {
     private Connection conexao;
 
-//    public void cadastrarHistoricoConsulta(HistoricoConsulta historicoconsulta) {
-//        conexao = ConnectionFactory.obterConexao();
-//
-//        PreparedStatement comandoSQL = null;
-//
-//        try {
-//            String sql = "INSERT INTO TBL_HC_HISTORICOS(id_historico, sintomas_historico, diagnostico, observacoes,id_consulta) values(?,?,?,?,?)";
-//
-//            comandoSQL = conexao.prepareStatement(sql);
-//
-//            comandoSQL.setInt(1, historicoconsulta.getId_historico());
-//            comandoSQL.setString(2, historicoconsulta.getSintomas_historico());
-//            comandoSQL.setString(3, historicoconsulta.getDiagnostico());
-//            comandoSQL.setString(4, historicoconsulta.getObservacao());
-//
-//            if (historicoconsulta.getConsultaOnline() != null) {
-//                comandoSQL.setInt(5, historicoconsulta.getConsultaOnline().getId_consulta());
-//            } else {
-//
-//                comandoSQL.setNull(5, java.sql.Types.INTEGER);
-//            }
-//
-//
-//            comandoSQL.executeUpdate();
-//            comandoSQL.close();
-//            conexao.close();
-//
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        }
-//    }
 public void cadastrarHistoricoConsulta(HistoricoConsulta historicoconsulta) {
     Connection conexao = null;
     PreparedStatement comandoSQL = null;
@@ -99,7 +68,7 @@ public List<HistoricoConsulta> listarTodosHistoricos() {
             historicoconsulta.setDiagnostico(rs.getString("diagnostico"));
             historicoconsulta.setObservacao(rs.getString("observacoes"));
 
-            // Buscar consulta online associada se existir
+
             int idConsulta = rs.getInt("id_consulta");
             if (!rs.wasNull()) {
                 ConsultaOnlineDao consultaDao = new ConsultaOnlineDao();
@@ -143,7 +112,7 @@ public HistoricoConsulta buscarPorIdhistorico(int id){
             historicoconsulta.setDiagnostico(rs.getString("diagnostico"));
             historicoconsulta.setObservacao(rs.getString("observacoes"));
 
-            // Verificar se há id_consulta e buscar a consulta online se existir
+
             int idConsulta = rs.getInt("id_consulta");
             if (!rs.wasNull()) {
                 ConsultaOnlineDao consultaDao = new ConsultaOnlineDao();

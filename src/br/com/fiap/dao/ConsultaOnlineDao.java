@@ -12,35 +12,6 @@ import java.util.List;
 public class ConsultaOnlineDao {
     private Connection conexao;
 
-//    public void cadastrarConsultaOnline(ConsultaOnline consultaOnline) {
-//            conexao = ConnectionFactory.obterConexao();
-//
-//            PreparedStatement comandoSQL = null;
-//
-//            try {
-//                String sql = "INSERT INTO TBL_HC_CONSULTA_ONLINE(id_consulta, data_Consulta, status, link, id_exame) values(?,?,?,?,?)";
-//
-//                comandoSQL = conexao.prepareStatement(sql);
-//
-//                comandoSQL.setInt(1, consultaOnline.getId_consulta());
-//                comandoSQL.setDate(2, java.sql.Date.valueOf(consultaOnline.getDataConsulta()));
-//                comandoSQL.setString(3, consultaOnline.getStatus());
-//                comandoSQL.setString(4, consultaOnline.getLink());
-//
-//                if (consultaOnline.getExame() != null) {
-//                    comandoSQL.setInt(5, consultaOnline.getExame().getId_exame());
-//                } else {
-//                    comandoSQL.setNull(5, java.sql.Types.INTEGER);
-//                }
-//
-//                comandoSQL.executeUpdate();
-//                comandoSQL.close();
-//                conexao.close();
-//
-//            } catch (SQLException e) {
-//                e.printStackTrace();
-//            }
-//        }
 public void cadastrarConsultaOnline(ConsultaOnline consultaOnline) throws SQLIntegrityConstraintViolationException {
     conexao = ConnectionFactory.obterConexao();
     PreparedStatement comandoSQL = null;
@@ -67,7 +38,7 @@ public void cadastrarConsultaOnline(ConsultaOnline consultaOnline) throws SQLInt
     } catch (SQLIntegrityConstraintViolationException e) {
         System.out.println("ERRO: Já existe uma consulta com o ID " + consultaOnline.getId_consulta() +
                 ". Por favor, use um ID diferente.");
-        throw e; // Re-lançar a exceção para tratamento superior
+        throw e;
     } catch (SQLException e) {
         System.out.println("Erro de banco de dados: " + e.getMessage());
         e.printStackTrace();
@@ -84,7 +55,7 @@ public void cadastrarConsultaOnline(ConsultaOnline consultaOnline) throws SQLInt
             List<ConsultaOnline> consultas = new ArrayList<>();
             conexao = ConnectionFactory.obterConexao();
             PreparedStatement ps = null;
-            ExameDao exameDao = new ExameDao(); // Create ExameDao instance to fetch exams
+            ExameDao exameDao = new ExameDao();
             try {
                 ps = conexao.prepareStatement("SELECT * FROM TBL_HC_CONSULTA_ONLINE ORDER BY id_consulta");
                 ResultSet rs = ps.executeQuery();

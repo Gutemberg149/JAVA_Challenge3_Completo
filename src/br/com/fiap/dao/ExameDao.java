@@ -48,7 +48,7 @@ public class ExameDao {
                 exame.setNome_exame(rs.getString(2));
                 exame.setResultado_exame(rs.getString(3));
 
-                // Use verificarResultado() method here
+
                 String status = exame.verificarResultado();
                 String descricao = "ID: " + exame.getId_exame() +
                         ", Nome: " + exame.getNome_exame() +
@@ -68,14 +68,14 @@ public class ExameDao {
     public Exame buscarPorIdExame(int id){
         conexao = ConnectionFactory.obterConexao();
         PreparedStatement ps = null;
-        Exame exame = null; // Changed from new Exame() to null
+        Exame exame = null;
         try {
             ps = conexao.prepareStatement("SELECT * from TBL_HC_EXAME WHERE id_exame = ?");
             ps.setInt(1, id);
             ResultSet rs = ps.executeQuery();
             if(rs.next()){
-                exame = new Exame(); // Create new instance only when record exists
-                exame.setId_exame(rs.getInt("id_exame")); // Fixed: set the ID first
+                exame = new Exame();
+                exame.setId_exame(rs.getInt("id_exame"));
                 exame.setNome_exame(rs.getString("nome_exame"));
                 exame.setResultado_exame(rs.getString("resultado_exame"));
             }
